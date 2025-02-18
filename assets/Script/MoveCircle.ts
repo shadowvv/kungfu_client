@@ -56,4 +56,12 @@ export class MoveCircle extends Component {
         g.stroke();
         g.fill();
     }
+
+    /**
+     * 更新位置
+     * @param center 世界坐标
+     */
+    updatePosition(center: Vec2) {
+        this.node.worldPosition = center.toVec3();
+    }
 }

@@ -95,4 +95,16 @@ export class AttackRange extends Component {
     private degreesToRadians(degrees: number): number {
         return degrees * (Math.PI / 180);
     }
+
+    /**
+     * 更新位置
+     * @param center 世界坐标
+     */
+    updatePosition(center: Vec2) {
+        this.node.worldPosition = center.toVec3();
+    }
+
+    rotate(lastAngle: number) {
+        this.node.setRotationFromEuler(0, 0, lastAngle);
+    }
 }

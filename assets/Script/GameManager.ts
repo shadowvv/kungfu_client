@@ -3,6 +3,7 @@ import { Player } from './Player';
 import { GameState, WAIT_ACTION_TICK, WAIT_COMMAND_TICK } from './RoleFactory';
 import { NetController } from './NetController';
 import { RoleMessage } from './Message';
+import { Role } from './Role';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameManager')
@@ -47,7 +48,7 @@ export class GameManager extends Component {
     private selfNode: Node = null;
     @property(Prefab)
     private targetPrefab: Prefab = null;
-    private targetScript: Player = null;
+    private targetScript: Role = null;
     private targetNode: Node = null;
 
     start() {
@@ -143,9 +144,9 @@ export class GameManager extends Component {
             this.targetNode = instantiate(this.targetPrefab);
             this.node.addChild(this.targetNode);
 
-            this.targetScript = this.targetNode.getComponent(Player);
+            this.targetScript = this.targetNode.getComponent(Role);
             if (this.targetScript) {
-                this.targetScript.buildRole(roleData.userName, roleData.roleId, roleData.weaponType, false, null);
+                this.targetScript.init(roleData.roleId, roleData.userName, roleData.weaponType);
                 this.targetScript.action(roleData.getPositionX(), roleData.getPositionY(), roleData.getFaceAngle());
             } else {
                 console.error("Target Player component not found!");
