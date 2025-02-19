@@ -38,7 +38,7 @@ export class Role extends Component {
         this.buildGraph();
     }
 
-    buildGraph(): void {
+    private buildGraph(): void {
         const emptyNode = new Node("emptyNode");
         this.node.addChild(emptyNode);
 
@@ -65,7 +65,7 @@ export class Role extends Component {
         this.draw();
     }
 
-    draw(): void {
+    private draw(): void {
         this.title.string = this.username + ": weaponType:" + WeaponEnum[this.weaponType] + " HP:" + this.hp;
         this.labelNode.setPosition(-BASE_NUMBER, this.radius + BASE_NUMBER, 0);
         if (this.bodyScript) {
@@ -91,12 +91,9 @@ export class Role extends Component {
         }
     }
 
-    updateAttack(lastAngle: number, center?: Vec2) {
-        if (this.attackScript) {
-            this.attackScript.rotate(lastAngle);
-            if (center) {
-                this.attackScript.updatePosition(center);
-            }
+    updateAttack(center?: Vec2) {
+        if (center) {
+            this.attackScript.updatePosition(center);
         }
     }
 
@@ -105,9 +102,13 @@ export class Role extends Component {
     }
 
     action(x: number, y: number, faceAngle: number) {
+        const center = new Vec2(x, y);
+        // this.updateBody(center);
+        // this.updateAttack(center);
+        this.rotateAttack(faceAngle);
+
         this.node.worldPosition = new Vec3(x, y, 0);
         this.lastAngle = faceAngle;
-        this.updateAttack(this.lastAngle);
     }
 
     getRoleId(): number {
@@ -120,6 +121,10 @@ export class Role extends Component {
 
     getMoveRange(): number  {
         return this.radius;
+    }
+
+    getBodyCenter() {
+        return this.bodyScript.getCenter();
     }
 }
 

@@ -207,11 +207,11 @@ export class GameManager extends Component {
         switch (this.gameState) {
             case GameState.WAIT_COMMAND:
                 this.countDownTick = WAIT_COMMAND_TICK;
-                this.selfScript.setActive(true);
+                this.selfScript.waitCommand();
                 break;
             case GameState.WAIT_ACTION:
                 this.countDownTick = WAIT_ACTION_TICK;
-                this.selfScript.setActive(false);
+                this.selfScript.waitAction();
                 break;
             case GameState.ACTION:
                 break;
@@ -250,7 +250,7 @@ export class GameManager extends Component {
             case GameState.LOGIN:
                 this.titleText.string = "等待登录";
                 break;
-            case GameState.CHOOSE_WEAPON:
+                case GameState.CHOOSE_WEAPON:
                 this.titleText.string = `${this.username}: 选择角色`;
                 break;
             case GameState.PREPARE:
@@ -260,10 +260,10 @@ export class GameManager extends Component {
                 this.titleText.string = `等待${this.username}指令：${this.countDownTick} 秒`;
                 break;
             case GameState.WAIT_ACTION:
-                this.titleText.string = `等待${this.username}行动：${this.countDownTick} 秒`;
+                this.titleText.string = `等待${this.username}行动：${this.countDownTick} 秒,center:${this.selfScript.getCenter().x},${this.selfScript.getCenter().y},angel:${this.selfScript.getLastAngle()},target:${this.targetScript.getBodyCenter().x},${this.targetScript.getBodyCenter().y}}`;
                 break;
             case GameState.ACTION:
-                this.titleText.string = `${this.username}:行动`;
+                this.titleText.string = `${this.username}:行动,center:${this.selfScript.getCenter().x},${this.selfScript.getCenter().y},angel:${this.selfScript.getLastAngle()},target:${this.targetScript.getBodyCenter().x},${this.targetScript.getBodyCenter().y}}`;
                 break;
             case GameState.END:
                 this.titleText.string = "战斗结束";

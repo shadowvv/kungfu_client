@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Prefab, instantiate, input, Input, EventMouse, UITransform,Vec2,Vec3,Camera } from 'cc';
+import { _decorator, Component, Node, Prefab, instantiate, input, Input, EventMouse, UITransform, Vec2, Vec3, Camera } from 'cc';
 import { Role } from './Role';
 import { ActionType, RoleFactory, WeaponEnum } from './RoleFactory';
 import { NetController } from './NetController';
@@ -12,14 +12,14 @@ export class Player extends Component {
     private roleScript: Role = null; // 角色脚本
     private netController: NetController = null; // 网络控制器
 
-    private active: boolean = false; // 是否激活
+    private active: boolean = true; // 是否激活
 
     private camera: Camera = null;
     private center: Vec2 = new Vec2(0, 0);//世界坐标
     private moveCenter: Vec2 = new Vec2(0, 0);//移动世界坐标
     private lastAngle: number = 0;
 
-    private actionType: ActionType = ActionType.MOVE; // 动作类型
+    private actionType: ActionType; // 动作类型
 
     /**
      * 创建角色
@@ -31,6 +31,7 @@ export class Player extends Component {
      */
     buildRole(userName: string, roleId: number, weaponType: WeaponEnum, active: boolean, netController: NetController): void {
         this.netController = netController;
+        this.actionType = ActionType.MOVE;
 
         if (this.role) {
             const roleNode = instantiate(this.role);
@@ -39,6 +40,11 @@ export class Player extends Component {
             this.roleScript = roleNode.getComponent(Role); // 使用类名获取组件
             if (this.roleScript) {
                 this.roleScript.init(roleId, userName, weaponType);
+
+                // 初始化圆心为角色初始位置
+                const initialPos = this.roleScript.node.worldPosition;
+                this.center.set(initialPos.x, initialPos.y);
+                this.moveCenter.set(initialPos.x, initialPos.y);
             } else {
                 console.error("Role component not found!");
             }
@@ -56,6 +62,9 @@ export class Player extends Component {
     action(x: number, y: number, faceAngle: number): void {
         if (this.roleScript) {
             this.center.set(x, y);
+            this.moveCenter.set(x, y);
+            this.lastAngle = faceAngle;
+
             this.roleScript.action(x, y, faceAngle);
         } else {
             console.error("Role script is not initialized!");
@@ -79,13 +88,15 @@ export class Player extends Component {
         }
         if (event.getButton() == 0) {
             if (this.actionType == ActionType.MOVE) {
-                this.roleScript.updateBody(this.center);
-
-                this.center = this.moveCenter;
                 this.actionType = ActionType.ATTACK;
+                this.roleScript.updateBody(this.center);
+                this.roleScript.updateAttack(this.center);
+
+                this.center.set(this.moveCenter.x,this.moveCenter.y);
                 this.roleScript.updatePosition(this.center);
             } else if (this.actionType == ActionType.ATTACK) {
                 this.actionType = ActionType.WAIT;
+                this.active = false;
                 this.netController.applyAttack(this.roleScript.getRoleId(), this.center.x, this.center.y, this.lastAngle);
             }
         }
@@ -98,10 +109,9 @@ export class Player extends Component {
 
         const mousePos = new Vec2(event.getLocationX(), event.getLocationY());
         const screenPos = new Vec3(mousePos.x, mousePos.y, 0);
-        const tempCenter = this.center.clone();
 
         if (this.actionType == ActionType.ATTACK) {
-            const dir = mousePos.subtract(tempCenter);
+            const dir = mousePos.clone().subtract(this.center);
             let angle = Math.atan2(dir.y, dir.x) * (180 / Math.PI);
             this.lastAngle = (angle + 360) % 360;
             this.roleScript.rotateAttack(this.lastAngle);
@@ -109,8 +119,8 @@ export class Player extends Component {
             let WorldPos = new Vec3();
             this.camera?.screenToWorld(screenPos, WorldPos);
 
-            let finalWorldPos = WorldPos.toVec2();  
-            const dir = finalWorldPos.clone().subtract(tempCenter);
+            let finalWorldPos = WorldPos.toVec2();
+            const dir = finalWorldPos.clone().subtract(this.center);
             const distance = dir.length();
             if (distance > this.roleScript.getMoveRange()) {
                 dir.normalize().multiplyScalar(this.roleScript.getMoveRange());
@@ -118,15 +128,31 @@ export class Player extends Component {
             }
 
             this.moveCenter.set(finalWorldPos.x, finalWorldPos.y);
+            
             this.roleScript.updateBody(this.moveCenter);
+            this.roleScript.updateAttack(this.moveCenter);
         }
     }
 
-    /**
-     * 设置角色是否激活
-     * @param active 是否激活
-     */
-    setActive(active: boolean): void {
-        this.active = active;
+    waitCommand() {
+        this.active = true;
+        this.actionType = ActionType.MOVE;
     }
+
+    waitAction() {
+        this.actionType = ActionType.ACTION;
+
+        this.roleScript.updateBody(this.center);
+        this.roleScript.updateAttack(this.center);
+        this.roleScript.rotateAttack(this.lastAngle);
+    }
+
+    getCenter() {
+        return this.center;
+    }
+
+    getLastAngle() {
+        return this.lastAngle;
+    }
+
 }

@@ -1,4 +1,4 @@
-import { _decorator, Component, Vec2, Graphics } from 'cc';
+import { _decorator, Component, Vec2, Graphics, Vec3 } from 'cc';
 import { BASE_NUMBER } from './RoleFactory';
 const { ccclass } = _decorator;
 
@@ -64,7 +64,11 @@ export class Body extends Component {
      * @param center 世界坐标
      */
     updatePosition(center: Vec2) {
-        this.node.worldPosition = center.toVec3();
+        const worldPosition = new Vec3(center.x, center.y, 0);
+        this.node.worldPosition = worldPosition;
     }
 
+    getCenter() {
+        return new Vec2(this.node.worldPosition.x, this.node.worldPosition.y);
+    }
 }
