@@ -1,0 +1,12 @@
+[
+    {
+        "environment":"dev",
+        "serverHost":"127.0.0.1:8080",
+        "reconnectInterval":3000
+    },
+    {
+        "environment":"prod",
+        "serverHost":"193.112.97.237:8080",
+        "reconnectInterval":3000
+    }
+]

@@ -1,6 +1,6 @@
-import { _decorator, Component, Node, Prefab, instantiate, Button, RichText, EditBox, Vec3 } from 'cc';
+import { _decorator, Component, Node, Prefab, instantiate, Button, RichText, EditBox, Vec3, View } from 'cc';
 import { Player } from './Player';
-import { GameState, WAIT_ACTION_TICK, WAIT_COMMAND_TICK } from './RoleFactory';
+import { GameState, getWaitActionTick, getWaitCommandTick } from './GameEnumAndConstants';
 import { NetController } from './NetController';
 import { RoleMessage } from './Message';
 import { Role } from './Role';
@@ -8,14 +8,19 @@ const { ccclass, property } = _decorator;
 
 @ccclass('GameManager')
 export class GameManager extends Component {
-    private tick: number = 0;
-    private lastTick: number = 0;
-    private countDownTick: number = 0;
 
     // 玩家数据
     private username: string;
     private playerId: number;
     private roleId: number;
+
+    // 计时器
+    private tick: number = 0;
+    private lastTick: number = 0;
+    private countDownTick: number = 0;
+
+    private netController: NetController = null;// 网络通信
+    private gameState: GameState = GameState.LOGIN;// 战斗相关
 
     // 武器选择按钮
     @property(RichText)
@@ -37,11 +42,7 @@ export class GameManager extends Component {
     @property(EditBox)
     private userNameInputText: EditBox = null;
 
-    // 网络通信
-    private netController: NetController = null;
-
-    // 战斗相关
-    private gameState: GameState = GameState.LOGIN;
+    // 角色相关控件
     @property(Prefab)
     private selfPrefab: Prefab = null;
     private selfScript: Player = null;
@@ -68,6 +69,13 @@ export class GameManager extends Component {
         this.knifeButton.node.active = visible;
         this.swordButton.node.active = visible;
         this.bladeButton.node.active = visible;
+    }
+
+    /**
+     * 重连后的回调
+     */ 
+    afterReconnect() {
+        //TODO: 重连后的逻辑
     }
 
     /**
@@ -178,7 +186,7 @@ export class GameManager extends Component {
      */
     battleStart(): void {
         this.gameState = GameState.WAIT_COMMAND;
-        this.countDownTick = WAIT_COMMAND_TICK;
+        this.countDownTick = getWaitCommandTick();
 
         this.tick = performance.now();
         this.lastTick = this.tick;
@@ -206,11 +214,11 @@ export class GameManager extends Component {
         this.gameState = battleState;
         switch (this.gameState) {
             case GameState.WAIT_COMMAND:
-                this.countDownTick = WAIT_COMMAND_TICK;
+                this.countDownTick = getWaitCommandTick();
                 this.selfScript.waitCommand();
                 break;
             case GameState.WAIT_ACTION:
-                this.countDownTick = WAIT_ACTION_TICK;
+                this.countDownTick = getWaitActionTick();
                 this.selfScript.waitAction();
                 break;
             case GameState.ACTION:
@@ -260,10 +268,10 @@ export class GameManager extends Component {
                 this.titleText.string = `等待${this.username}指令：${this.countDownTick} 秒`;
                 break;
             case GameState.WAIT_ACTION:
-                this.titleText.string = `等待${this.username}行动：${this.countDownTick} 秒,center:${this.selfScript.getCenter().x},${this.selfScript.getCenter().y},angel:${this.selfScript.getLastAngle()},target:${this.targetScript.getBodyCenter().x},${this.targetScript.getBodyCenter().y}}`;
+                this.titleText.string = `等待${this.username}行动：${this.countDownTick} 秒`;
                 break;
             case GameState.ACTION:
-                this.titleText.string = `${this.username}:行动,center:${this.selfScript.getCenter().x},${this.selfScript.getCenter().y},angel:${this.selfScript.getLastAngle()},target:${this.targetScript.getBodyCenter().x},${this.targetScript.getBodyCenter().y}}`;
+                this.titleText.string = `${this.username}:行动`;
                 break;
             case GameState.END:
                 this.titleText.string = "战斗结束";

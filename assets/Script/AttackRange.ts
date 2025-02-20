@@ -1,4 +1,5 @@
 import { _decorator, Component, Graphics, Vec2 } from 'cc';
+import { ViewConfig } from './JsonObject/ViewConfig';
 const { ccclass } = _decorator;
 
 /**
@@ -6,20 +7,6 @@ const { ccclass } = _decorator;
  */
 @ccclass('AttackRange')
 export class AttackRange extends Component {
-    /**
-     * 边框颜色（红色）
-     */
-    private static readonly STROKE_COLOR: string = '#ff0000';
-
-    /**
-     * 填充颜色（半透明红色）
-     */
-    private static readonly FILL_COLOR: string = '#ff000088';
-
-    /**
-     * 边框宽度
-     */
-    private static readonly LINE_WIDTH: number = 5;
 
     /**
      * 绘制扇形区域
@@ -30,7 +17,7 @@ export class AttackRange extends Component {
      * @param endAngle 结束角度（度）
      * @param offsetAngle 偏移角度（度）
      */
-    draw(outerRadius: number, innerRadius: number, startAngle: number, endAngle: number, offsetAngle: number,center?: Vec2) {
+    draw(outerRadius: number, innerRadius: number, startAngle: number, endAngle: number, offsetAngle: number, center?: Vec2): void {
         const graphics = this.getComponent(Graphics);
         if (!graphics) {
             console.error("Graphics component not found!");
@@ -40,13 +27,13 @@ export class AttackRange extends Component {
         // 清除画布
         graphics.clear();
 
-        // 设置样式
-        graphics.lineWidth = AttackRange.LINE_WIDTH;
-        graphics.fillColor.fromHEX(AttackRange.FILL_COLOR);
-        graphics.strokeColor.fromHEX(AttackRange.STROKE_COLOR);
+        // 设置样式 
+        graphics.lineWidth = ViewConfig.getInstance().getAttackLineWidth();
+        graphics.fillColor.fromHEX(ViewConfig.getInstance().getAttackFillColor());
+        graphics.strokeColor.fromHEX(ViewConfig.getInstance().getAttackStrockColor());
 
         // 绘制扇形区域
-        this.drawSector(graphics,outerRadius, innerRadius, startAngle, endAngle, offsetAngle,center);
+        this.drawSector(graphics, outerRadius, innerRadius, startAngle, endAngle, offsetAngle, center);
     }
 
     /**
@@ -59,7 +46,7 @@ export class AttackRange extends Component {
      * @param endAngle 结束角度（度）
      * @param offsetAngle 偏移角度（度）
      */
-    private drawSector(graphics: Graphics, outerRadius: number, innerRadius: number, startAngle: number, endAngle: number, offsetAngle: number, center?: Vec2) {
+    private drawSector(graphics: Graphics, outerRadius: number, innerRadius: number, startAngle: number, endAngle: number, offsetAngle: number, center?: Vec2): void {
         if (!center) {
             center = new Vec2(0, 0);
         }
@@ -100,11 +87,15 @@ export class AttackRange extends Component {
      * 更新位置
      * @param center 世界坐标
      */
-    updatePosition(center: Vec2) {
+    updatePosition(center: Vec2): void {
         this.node.worldPosition = center.toVec3();
     }
 
-    rotate(lastAngle: number) {
-        this.node.setRotationFromEuler(0, 0, lastAngle);
+    /**
+     * z轴旋转
+     * @param currentAngle 上一个角度
+     */
+    rotate(currentAngle: number): void {
+        this.node.setRotationFromEuler(0, 0, currentAngle);
     }
 }

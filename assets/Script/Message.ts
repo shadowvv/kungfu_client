@@ -138,15 +138,27 @@ export class OperationReqMessage extends BaseMessage {
         this.id = MessageType.OPERATION_REQ;
     }
 
-    setPositionX(x: number) {
+    /**
+     * 
+     * @param x x坐标
+     */
+    setPositionX(x: number): void {
         this.x = Math.floor(x * 1000);
     }
 
-    setPositionY(y: number) {
+    /**
+     *  
+     * @param y y坐标
+     */
+    setPositionY(y: number): void {
         this.y = Math.floor(y * 1000);
     }
 
-    setFaceAngle(faceAngle: number) {
+    /**
+     * 
+     * @param faceAngle 面向角度
+     */
+    setFaceAngle(faceAngle: number): void {
         this.faceAngle = Math.floor(faceAngle * 1000);
     }
 }
@@ -243,14 +255,26 @@ export class RoleMessage {
     public y: number;
     public faceAngle: number;
 
+    /**
+     * 
+     * @returns x 坐标
+     */
     getPositionX(): number {
         return this.x / 1000;
     }
 
+    /**
+     * 
+     * @returns y 坐标
+     */
     getPositionY(): number {
         return this.y / 1000;
     }
 
+    /**
+     * 
+     * @returns 面向角度
+     */
     getFaceAngle(): number {
         return this.faceAngle / 1000;
     }

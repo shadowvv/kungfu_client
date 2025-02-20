@@ -2,18 +2,22 @@ import { _decorator, Component, instantiate, Node, Prefab, __private, Vec2, Labe
 import { MoveCircle } from './MoveCircle';
 import { AttackRange } from './AttackRange';
 import { Body } from './Body';
-import { ActionType, BASE_NUMBER, RoleFactory, WeaponEnum } from './RoleFactory';
+import { getBaseNumber, WeaponEnum } from './GameEnumAndConstants';
+import { WeaponConfig } from './JsonObject/WeaponConfig';
 const { ccclass, property } = _decorator;
 
+/**
+ * 角色组件
+ */
 @ccclass('Role')
 export class Role extends Component {
-    private weaponType: WeaponEnum;
 
     private username: string;
     private roleId: number;
     private hp: number = 0;
 
-    private radius: number = 200;
+    private weaponType: WeaponEnum;
+    private radius: number;
     private lastAngle: number = 0;
 
     private title: Label = null;
@@ -28,16 +32,27 @@ export class Role extends Component {
     private attackRange: Prefab = null;
     private attackScript: AttackRange = null;
 
+    /**
+     * 初始化角色
+     * @param roleId 角色 ID
+     * @param username 用户名 
+     * @param weapon 武器类型 
+     */
     init(roleId: number, username: string, weapon: WeaponEnum): void {
         this.roleId = roleId;
         this.username = username;
         this.weaponType = weapon;
-        this.hp = 5;
-        this.radius = RoleFactory.getMoveRange(this.weaponType);
+
+        const WeaponData = WeaponConfig.getInstance().getWeaponById(weapon);
+        this.hp = WeaponData.hp;
+        this.radius = WeaponConfig.getInstance().getWeaponById(weapon).moveRange * getBaseNumber();
 
         this.buildGraph();
     }
 
+    /**
+     * 构建角色图形
+     */
     private buildGraph(): void {
         const emptyNode = new Node("emptyNode");
         this.node.addChild(emptyNode);
@@ -65,66 +80,89 @@ export class Role extends Component {
         this.draw();
     }
 
+    /**
+     * 绘制角色图形
+     */
     private draw(): void {
         this.title.string = this.username + ": weaponType:" + WeaponEnum[this.weaponType] + " HP:" + this.hp;
-        this.labelNode.setPosition(-BASE_NUMBER, this.radius + BASE_NUMBER, 0);
+        this.labelNode.setPosition(-getBaseNumber(), this.radius + getBaseNumber(), 0);
         if (this.bodyScript) {
             this.bodyScript.draw();
         }
         if (this.circleScript) {
-            this.radius = RoleFactory.getMoveRange(this.weaponType);
             this.circleScript.draw(this.radius);
         }
         if (this.attackScript) {
-            const attackRangeParam = RoleFactory.getAttackRange(this.weaponType);
-            this.attackScript.draw(attackRangeParam.innerRadius, attackRangeParam.outerRadius, attackRangeParam.startAngle, attackRangeParam.endAngle, this.lastAngle);  // 设置半径和颜色
+            const attackRangeParam = WeaponConfig.getInstance().getWeaponById(this.weaponType);
+            this.attackScript.draw(attackRangeParam.innerRadius * getBaseNumber(), attackRangeParam.outerRadius * getBaseNumber(), attackRangeParam.startAngle, attackRangeParam.endAngle, this.lastAngle);  // 设置半径和颜色
         }
     }
 
+    /**
+     * 更新角色世界坐标位置
+     * @param center 圆心坐标
+     */
     updatePosition(center: Vec2) {
         this.node.worldPosition = new Vec3(center.x, center.y, 0);
     }
 
-    updateBody(center?: Vec2) {
-        if (center) {
-            this.bodyScript.updatePosition(center);
-        }
+    /**
+     * 更新角色移动范围
+     * @param center 圆心坐标
+     */
+    updateBody(center: Vec2) {
+        this.bodyScript.updatePosition(center);
     }
 
-    updateAttack(center?: Vec2) {
-        if (center) {
-            this.attackScript.updatePosition(center);
-        }
+    /**
+     * 更新角色攻击范围
+     * @param center 圆心坐标
+     */
+    updateAttack(center: Vec2) {
+        this.attackScript.updatePosition(center);
     }
 
+    /**
+     * 旋转角色攻击范围
+     * @param lastAngle 旋转角度
+     */
     rotateAttack(lastAngle: number) {
         this.attackScript.rotate(lastAngle);
     }
 
+    /**
+     * 触发角色动作
+     * @param x x 坐标
+     * @param y y 坐标
+     * @param faceAngle 面向角度
+     */
     action(x: number, y: number, faceAngle: number) {
         const center = new Vec2(x, y);
-        // this.updateBody(center);
-        // this.updateAttack(center);
         this.rotateAttack(faceAngle);
 
         this.node.worldPosition = new Vec3(x, y, 0);
         this.lastAngle = faceAngle;
     }
 
+    /**
+     * @returns 获取角色 ID
+     */
     getRoleId(): number {
         return this.roleId;
     }
 
-    getWeaponType(): WeaponEnum {
-        return this.weaponType;
-    }
-
-    getMoveRange(): number  {
+    /**
+     * @returns 获取角色移动范围
+     */
+    getMoveRange(): number {
         return this.radius;
     }
 
-    getBodyCenter() {
-        return this.bodyScript.getCenter();
+    /**
+     * @returns 获取角色武器类型
+     */
+    getWeaponType(): WeaponEnum {
+        return this.weaponType;
     }
 }
 

@@ -1,0 +1,13 @@
+[
+    {
+        "bodyStrockColor":"#000000",
+        "bodyFillColor":"#00FF0088",
+        "bodyLineWidth":5,
+        "MoveStrockColor":"#000000",
+        "MoveFillColor":"#00009988",
+        "MoveLineWidth":5,
+        "AttackStrockColor":"#ff0000",
+        "AttackFillColor":"#ff000088",
+        "AttackLineWidth":5
+    }
+]

@@ -1,0 +1,7 @@
+[
+    {
+        "baseNumber":35,
+        "waitCommandTick":10,
+        "waitActionTick":5
+    }
+]

@@ -1,4 +1,5 @@
-import { _decorator, Component, Graphics, Vec2 } from 'cc';
+import { _decorator, Component, Graphics, Vec2, View, view } from 'cc';
+import { ViewConfig } from './JsonObject/ViewConfig';
 const { ccclass, property } = _decorator;
 
 /**
@@ -6,27 +7,13 @@ const { ccclass, property } = _decorator;
  */
 @ccclass('MoveCircle')
 export class MoveCircle extends Component {
-    /**
-     * 边框颜色（黑色）
-     */
-    private static readonly STROKE_COLOR: string = '#000000';
-
-    /**
-     * 填充颜色（半透明蓝色）
-     */
-    private static readonly FILL_COLOR: string = '#00009988';
-
-    /**
-     * 边框宽度
-     */
-    private static readonly LINE_WIDTH: number = 5;
 
     /**
      * 绘制移动范围
      * @param center 圆心坐标
      * @param moveRange 移动半径
      */
-    draw(moveRange: number) {
+    draw(moveRange: number): void {
         const g = this.getComponent(Graphics);
         if (!g) {
             console.error("Graphics component not found!");
@@ -37,9 +24,9 @@ export class MoveCircle extends Component {
         g.clear();
 
         // 设置样式
-        g.lineWidth = MoveCircle.LINE_WIDTH;
-        g.fillColor.fromHEX(MoveCircle.FILL_COLOR);
-        g.strokeColor.fromHEX(MoveCircle.STROKE_COLOR);
+        g.lineWidth = ViewConfig.getInstance().getMoveLineWidth();
+        g.fillColor.fromHEX(ViewConfig.getInstance().getMoveFillColor());
+        g.strokeColor.fromHEX(ViewConfig.getInstance().getMoveStrockColor());
 
         // 绘制圆形
         this.drawCircle(g, moveRange);
@@ -51,7 +38,7 @@ export class MoveCircle extends Component {
      * @param center 圆心坐标
      * @param radius 半径
      */
-    private drawCircle(g: Graphics, radius: number) {
+    private drawCircle(g: Graphics, radius: number): void {
         g.circle(0, 0, radius);
         g.stroke();
         g.fill();
@@ -61,7 +48,7 @@ export class MoveCircle extends Component {
      * 更新位置
      * @param center 世界坐标
      */
-    updatePosition(center: Vec2) {
+    updatePosition(center: Vec2): void {
         this.node.worldPosition = center.toVec3();
     }
 }

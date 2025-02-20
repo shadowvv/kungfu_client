@@ -1,24 +1,25 @@
-import { _decorator, Component, Node, Prefab, instantiate, input, Input, EventMouse, UITransform, Vec2, Vec3, Camera } from 'cc';
+import { _decorator, Component, Prefab, instantiate, input, Input, EventMouse, Vec2, Vec3, Camera } from 'cc';
 import { Role } from './Role';
-import { ActionType, RoleFactory, WeaponEnum } from './RoleFactory';
+import { ActionType, WeaponEnum } from './GameEnumAndConstants';
 import { NetController } from './NetController';
 const { ccclass, property } = _decorator;
 
+/**
+ * 玩家组件
+ */
 @ccclass('Player')
 export class Player extends Component {
 
     @property(Prefab)
     private role: Prefab = null; // 角色预制体
+    private camera: Camera = null; // 相机
     private roleScript: Role = null; // 角色脚本
     private netController: NetController = null; // 网络控制器
 
     private active: boolean = true; // 是否激活
-
-    private camera: Camera = null;
     private center: Vec2 = new Vec2(0, 0);//世界坐标
     private moveCenter: Vec2 = new Vec2(0, 0);//移动世界坐标
-    private lastAngle: number = 0;
-
+    private currentAngle: number = 0; // 最后角度
     private actionType: ActionType; // 动作类型
 
     /**
@@ -31,6 +32,7 @@ export class Player extends Component {
      */
     buildRole(userName: string, roleId: number, weaponType: WeaponEnum, active: boolean, netController: NetController): void {
         this.netController = netController;
+        this.active = active;
         this.actionType = ActionType.MOVE;
 
         if (this.role) {
@@ -63,12 +65,31 @@ export class Player extends Component {
         if (this.roleScript) {
             this.center.set(x, y);
             this.moveCenter.set(x, y);
-            this.lastAngle = faceAngle;
+            this.currentAngle = faceAngle;
 
             this.roleScript.action(x, y, faceAngle);
         } else {
             console.error("Role script is not initialized!");
         }
+    }
+
+    /**
+     * 等待命令
+     */
+    waitCommand() {
+        this.active = true;
+        this.actionType = ActionType.MOVE;
+    }
+
+    /**
+     * 等待操作
+     */
+    waitAction() {
+        this.actionType = ActionType.ACTION;
+
+        this.roleScript.updateBody(this.center);
+        this.roleScript.updateAttack(this.center);
+        this.roleScript.rotateAttack(this.currentAngle);
     }
 
     onLoad(): void {
@@ -92,12 +113,12 @@ export class Player extends Component {
                 this.roleScript.updateBody(this.center);
                 this.roleScript.updateAttack(this.center);
 
-                this.center.set(this.moveCenter.x,this.moveCenter.y);
+                this.center.set(this.moveCenter.x, this.moveCenter.y);
                 this.roleScript.updatePosition(this.center);
             } else if (this.actionType == ActionType.ATTACK) {
                 this.actionType = ActionType.WAIT;
                 this.active = false;
-                this.netController.applyAttack(this.roleScript.getRoleId(), this.center.x, this.center.y, this.lastAngle);
+                this.netController.applyAttack(this.roleScript.getRoleId(), this.center.x, this.center.y, this.currentAngle);
             }
         }
     }
@@ -111,10 +132,10 @@ export class Player extends Component {
         const screenPos = new Vec3(mousePos.x, mousePos.y, 0);
 
         if (this.actionType == ActionType.ATTACK) {
-            const dir = mousePos.clone().subtract(this.center);
+            const dir = mousePos.subtract(this.center);
             let angle = Math.atan2(dir.y, dir.x) * (180 / Math.PI);
-            this.lastAngle = (angle + 360) % 360;
-            this.roleScript.rotateAttack(this.lastAngle);
+            this.currentAngle = (angle + 360) % 360;
+            this.roleScript.rotateAttack(this.currentAngle);
         } else if (this.actionType == ActionType.MOVE) {
             let WorldPos = new Vec3();
             this.camera?.screenToWorld(screenPos, WorldPos);
@@ -128,31 +149,10 @@ export class Player extends Component {
             }
 
             this.moveCenter.set(finalWorldPos.x, finalWorldPos.y);
-            
+
             this.roleScript.updateBody(this.moveCenter);
             this.roleScript.updateAttack(this.moveCenter);
         }
-    }
-
-    waitCommand() {
-        this.active = true;
-        this.actionType = ActionType.MOVE;
-    }
-
-    waitAction() {
-        this.actionType = ActionType.ACTION;
-
-        this.roleScript.updateBody(this.center);
-        this.roleScript.updateAttack(this.center);
-        this.roleScript.rotateAttack(this.lastAngle);
-    }
-
-    getCenter() {
-        return this.center;
-    }
-
-    getLastAngle() {
-        return this.lastAngle;
     }
 
 }
