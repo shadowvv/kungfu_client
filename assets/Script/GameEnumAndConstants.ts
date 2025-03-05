@@ -1,10 +1,24 @@
 import { _decorator, Game } from 'cc';
 import { GameConfig } from './JsonObject/GameConfig';
-import { WeaponConfig, WeaponData } from './JsonObject/WeaponConfig';
-const { ccclass } = _decorator;
 
 export const ENVIRONMENT:string = 'dev';
 // export const environment:string = 'prod';
+
+/**
+ * 资源
+ */
+export enum ResourceTarget {
+    Global = "global",
+    LoadingScene = "loadingScene",
+    LoginScene = "loginScene",
+    MainScene = "mainScene",
+    BattleScene = "battleScene",
+    Blade = "blade",
+    Knife = "knife",
+    Spear = "spear",
+    Bow = "bow",
+    Sword = "sword",
+}
 
 /**
  * 角色动作类型
@@ -107,4 +121,12 @@ export function getWaitActionTick(): number {
  */
 export function getBaseNumber(): number {
     return GameConfig.getInstance().getBaseNumber();
+}
+
+/**
+ * 
+ * @returns 浮点数转整数放大倍数
+ */
+export function getFloat2Int(): number {
+    return GameConfig.getInstance().getFloat2Int();
 }

@@ -1,5 +1,5 @@
 import { _decorator, Component, Graphics, Vec2, View, view } from 'cc';
-import { ViewConfig } from './JsonObject/ViewConfig';
+import { ViewConfig } from '../JsonObject/ViewConfig';
 const { ccclass, property } = _decorator;
 
 /**

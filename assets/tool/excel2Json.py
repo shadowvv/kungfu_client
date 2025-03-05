@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 # 目录路径
-input_directory = "./assets/config"
+input_directory = "./assets/resources/config"
 output_directory = "./assets/resources/config"
 
 # 确保输出目录存在
@@ -15,6 +15,11 @@ for filename in os.listdir(input_directory):
         
         # 读取 Excel 文件
         df = pd.read_excel(file_path)
+
+        # 遍历 DataFrame 的每一列，检查是否有换行符
+        for col in df.columns:
+            # 如果字段中包含换行符，则将其拆分为数组
+            df[col] = df[col].apply(lambda x: x.split("\n") if isinstance(x, str) and "\n" in x else x)
 
         # 导出为 JSON 文件，输出文件名与 Excel 文件名对应
         output_file_path = os.path.join(output_directory, f"{os.path.splitext(filename)[0]}.json")

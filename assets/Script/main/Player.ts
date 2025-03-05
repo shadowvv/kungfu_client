@@ -1,7 +1,7 @@
 import { _decorator, Component, Prefab, instantiate, input, Input, EventMouse, Vec2, Vec3, Camera } from 'cc';
-import { Role } from './Role';
-import { ActionType, WeaponEnum } from './GameEnumAndConstants';
-import { NetController } from './NetController';
+import { Role } from '../battle/Role';
+import { ActionType, WeaponEnum } from '../GameEnumAndConstants';
+import { NetController } from '../NetController';
 const { ccclass, property } = _decorator;
 
 /**
@@ -60,14 +60,15 @@ export class Player extends Component {
      * @param x x 坐标
      * @param y y 坐标
      * @param faceAngle 面向角度
+     * @param hp 血量
      */
-    action(x: number, y: number, faceAngle: number): void {
+    action(x: number, y: number, faceAngle: number,hp:number): void {
         if (this.roleScript) {
             this.center.set(x, y);
             this.moveCenter.set(x, y);
             this.currentAngle = faceAngle;
 
-            this.roleScript.action(x, y, faceAngle);
+            this.roleScript.action(x, y, faceAngle,hp);
         } else {
             console.error("Role script is not initialized!");
         }

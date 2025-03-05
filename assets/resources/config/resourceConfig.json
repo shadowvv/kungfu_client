@@ -1,0 +1,141 @@
+[
+    {
+        "name": "global",
+        "audioArray": [
+            "audio/commonBGM"
+        ],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [
+            "UI/UI"
+        ],
+        "jsonArray": [
+            "config/resourceConfig",
+            "config/serverConfig",
+            "config/gameConfig"
+        ],
+        "backgroundFrameArray": []
+    },
+    {
+        "name": "loadingScene",
+        "audioArray": [],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [],
+        "jsonArray": [],
+        "backgroundFrameArray": [
+            "BG/loadBG1",
+            "BG/loadBG2"
+        ]
+    },
+    {
+        "name": "loginScene",
+        "audioArray": [],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [],
+        "jsonArray": [],
+        "backgroundFrameArray": [
+            "BG/loadBG1"
+        ]
+    },
+    {
+        "name": "mainScene",
+        "audioArray": [],
+        "spiritFrameArray": [
+            "icon/spearIcon",
+            "icon/bowIcon",
+            "icon/knifeIcon",
+            "icon/bladeIcon",
+            "icon/swordIcon"
+        ],
+        "spiritAtlasArray": [],
+        "jsonArray": [
+            "config/weaponConfig",
+            "config/viewConfig"
+        ],
+        "backgroundFrameArray": []
+    },
+    {
+        "name": "battleScene",
+        "audioArray": [
+            "audio/battleBGM"
+        ],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [],
+        "jsonArray": [],
+        "backgroundFrameArray": []
+    },
+    {
+        "name": "blade",
+        "audioArray": [
+            "audio/bladeAttack",
+            "audio/bladeHit"
+        ],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [
+            "role/man/blade/action",
+            "role/man/blade/state",
+            "role/man/blade/attack"
+        ],
+        "jsonArray": [],
+        "backgroundFrameArray": []
+    },
+    {
+        "name": "knife",
+        "audioArray": [
+            "audio/bladeAttack",
+            "audio/bladeHit"
+        ],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [
+            "role/woman/knife/action",
+            "role/woman/knife/state",
+            "role/woman/knife/attack"
+        ],
+        "jsonArray": [],
+        "backgroundFrameArray": []
+    },
+    {
+        "name": "spear",
+        "audioArray": [
+            "audio/spearAttack",
+            "audio/spearHit"
+        ],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [
+            "role/man/spear/action",
+            "role/man/spear/state",
+            "role/man/spear/attack"
+        ],
+        "jsonArray": [],
+        "backgroundFrameArray": []
+    },
+    {
+        "name": "bow",
+        "audioArray": [
+            "audio/bowAttack",
+            "audio/bowHit"
+        ],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [
+            "role/woman/bow/action",
+            "role/woman/bow/state",
+            "role/woman/bow/attack"
+        ],
+        "jsonArray": [],
+        "backgroundFrameArray": []
+    },
+    {
+        "name": "sword",
+        "audioArray": [
+            "audio/bladeAttack",
+            "audio/bladeHit"
+        ],
+        "spiritFrameArray": [],
+        "spiritAtlasArray": [
+            "role/woman/knife/action",
+            "role/woman/knife/state",
+            "role/woman/knife/attack"
+        ],
+        "jsonArray": [],
+        "backgroundFrameArray": []
+    }
+]

@@ -1,34 +1,24 @@
-import { _decorator, Component } from 'cc';
+import { _decorator} from 'cc';
 import {
     ApplyBattleReqMessage, ApplyBattleRespMessage, BattleResultBroadMessage,
     BattleStateBroadMessage, CancelMatchReqMessage, ErrorMessage, LoginReqMessage,
     LoginRespMessage, MatchResultBroadMessage, MessageType, OperationReqMessage,
     OperationRespMessage
 } from './Message';
-import { GameManager } from './GameManager';
+import { BattleManager } from './battle/BattleManager';
 import { ServerConfig } from './JsonObject/ServerConfig';
 import { ENVIRONMENT } from './GameEnumAndConstants';
-const { ccclass } = _decorator;
 
 /**
  * 网络控制器，负责处理 WebSocket 连接和消息的发送和接收
  */
-@ccclass('NetController')
-export class NetController extends Component {
+export class NetController {
 
     private ws: WebSocket = null;  // WebSocket 连接对象
-    private gameManager: GameManager = null;  // 游戏管理器实例
+    private gameManager: BattleManager = null;  // 游戏管理器实例
 
-    constructor(gameManager: GameManager) {
-        super();
+    constructor(gameManager: BattleManager) {
         this.gameManager = gameManager;  // 通过构造函数初始化游戏管理器
-    }
-
-    /**
-     * 生命周期方法，组件初始化时调用
-     */
-    start(): void {
-        this.connectWebSocket(false);  // 建立 WebSocket 连接
     }
 
     /**

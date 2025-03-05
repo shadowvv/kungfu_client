@@ -2,8 +2,8 @@ import { _decorator, Component, instantiate, Node, Prefab, __private, Vec2, Labe
 import { MoveCircle } from './MoveCircle';
 import { AttackRange } from './AttackRange';
 import { Body } from './Body';
-import { getBaseNumber, WeaponEnum } from './GameEnumAndConstants';
-import { WeaponConfig } from './JsonObject/WeaponConfig';
+import { getBaseNumber, WeaponEnum } from '../GameEnumAndConstants';
+import { WeaponConfig } from '../JsonObject/WeaponConfig';
 const { ccclass, property } = _decorator;
 
 /**
@@ -18,7 +18,7 @@ export class Role extends Component {
 
     private weaponType: WeaponEnum;
     private radius: number;
-    private lastAngle: number = 0;
+    private faceAngle: number = 0;
 
     private title: Label = null;
     private labelNode: Node = null;
@@ -94,7 +94,7 @@ export class Role extends Component {
         }
         if (this.attackScript) {
             const attackRangeParam = WeaponConfig.getInstance().getWeaponById(this.weaponType);
-            this.attackScript.draw(attackRangeParam.innerRadius * getBaseNumber(), attackRangeParam.outerRadius * getBaseNumber(), attackRangeParam.startAngle, attackRangeParam.endAngle, this.lastAngle);  // 设置半径和颜色
+            this.attackScript.draw(attackRangeParam.innerRadius * getBaseNumber(), attackRangeParam.outerRadius * getBaseNumber(), attackRangeParam.startAngle, attackRangeParam.endAngle, this.faceAngle);  // 设置半径和颜色
         }
     }
 
@@ -135,13 +135,15 @@ export class Role extends Component {
      * @param x x 坐标
      * @param y y 坐标
      * @param faceAngle 面向角度
+     * @param hp 血量
      */
-    action(x: number, y: number, faceAngle: number) {
+    action(x: number, y: number, faceAngle: number,hp:number) {
         const center = new Vec2(x, y);
         this.rotateAttack(faceAngle);
 
         this.node.worldPosition = new Vec3(x, y, 0);
-        this.lastAngle = faceAngle;
+        this.faceAngle = faceAngle;
+        this.hp = hp;
     }
 
     /**

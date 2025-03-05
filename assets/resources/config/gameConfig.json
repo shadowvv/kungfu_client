@@ -1,7 +1,8 @@
 [
     {
-        "baseNumber":35,
-        "waitCommandTick":10,
-        "waitActionTick":5
+        "baseNumber": "25",
+        "waitCommandTick": "10",
+        "waitActionTick": "5",
+        "float2Int": "1000000"
     }
 ]

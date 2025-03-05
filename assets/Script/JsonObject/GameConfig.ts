@@ -6,6 +6,7 @@ const { ccclass } = _decorator;
  */
 @ccclass('GameConfig')
 export class GameConfig {
+
     private static instance: GameConfig = null;
     private static readonly CONFIG_FILE: string = 'config/gameConfig';
     static getInstance(): GameConfig {
@@ -18,6 +19,7 @@ export class GameConfig {
     private baseNumber: number = 0;
     private waitCommandTick: number = 0;
     private waitActionTick: number = 0;
+    private float2Int: number = 0;
 
     private constructor() {
     }
@@ -37,6 +39,7 @@ export class GameConfig {
                 this.baseNumber = json[0]["baseNumber"];
                 this.waitCommandTick = json[0]["waitCommandTick"];
                 this.waitActionTick = json[0]["waitActionTick"];
+                this.float2Int = json[0]["float2Int"];
                 console.log("GameConfig loaded successfully.");
                 resolve();
             });
@@ -67,4 +70,11 @@ export class GameConfig {
         return this.waitActionTick;
     }
 
+    /**
+     *
+     * @returns 浮点数转整数放大倍数
+     */
+    getFloat2Int(): number {
+        return this.float2Int;
+    }
 }

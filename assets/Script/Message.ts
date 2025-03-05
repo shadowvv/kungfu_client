@@ -1,10 +1,10 @@
 import { _decorator } from 'cc';
+import { getFloat2Int } from './GameEnumAndConstants';
 const { ccclass } = _decorator;
 
 /**
  * 消息基类
  */
-@ccclass('BaseMessage')
 export class BaseMessage {
     public id: number;
 
@@ -143,7 +143,7 @@ export class OperationReqMessage extends BaseMessage {
      * @param x x坐标
      */
     setPositionX(x: number): void {
-        this.x = Math.floor(x * 1000);
+        this.x = Math.floor(x * getFloat2Int());
     }
 
     /**
@@ -151,7 +151,7 @@ export class OperationReqMessage extends BaseMessage {
      * @param y y坐标
      */
     setPositionY(y: number): void {
-        this.y = Math.floor(y * 1000);
+        this.y = Math.floor(y * getFloat2Int());
     }
 
     /**
@@ -159,7 +159,7 @@ export class OperationReqMessage extends BaseMessage {
      * @param faceAngle 面向角度
      */
     setFaceAngle(faceAngle: number): void {
-        this.faceAngle = Math.floor(faceAngle * 1000);
+        this.faceAngle = Math.floor(faceAngle * getFloat2Int());
     }
 }
 
@@ -254,13 +254,14 @@ export class RoleMessage {
     public x: number;
     public y: number;
     public faceAngle: number;
+    public hp: number;
 
     /**
      * 
      * @returns x 坐标
      */
     getPositionX(): number {
-        return this.x / 1000;
+        return this.x / getFloat2Int();
     }
 
     /**
@@ -268,7 +269,7 @@ export class RoleMessage {
      * @returns y 坐标
      */
     getPositionY(): number {
-        return this.y / 1000;
+        return this.y / getFloat2Int();
     }
 
     /**
@@ -276,7 +277,15 @@ export class RoleMessage {
      * @returns 面向角度
      */
     getFaceAngle(): number {
-        return this.faceAngle / 1000;
+        return this.faceAngle / getFloat2Int();
+    }
+
+    /**
+     * 
+     * @returns 血量
+     */
+    getHp(): number {
+        return this.hp / getFloat2Int();
     }
 }
 
