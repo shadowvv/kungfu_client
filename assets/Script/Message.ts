@@ -1,6 +1,5 @@
 import { _decorator } from 'cc';
 import { getFloat2Int } from './GameEnumAndConstants';
-const { ccclass } = _decorator;
 
 /**
  * 消息基类
@@ -48,11 +47,36 @@ export class BaseMessage {
 }
 
 /**
+ * 注册请求消息
+ */
+export class RegisterReqMessage extends BaseMessage {
+    
+    public userName: string;
+    public password: string;
+
+    constructor() {
+        super();
+        this.id = MessageType.REGISTER_REQ;
+    }
+}
+
+export class RegisterRespMessage extends BaseMessage {
+
+    public playerInfo:PlayerInfoMessage = null;
+
+    constructor() {
+        super();
+        this.id = MessageType.REGISTER_RESP;
+    }
+}
+
+/**
  * 登录请求消息
  */
-@ccclass('LoginReqMessage')
 export class LoginReqMessage extends BaseMessage {
+
     public userName: string;
+    public password: string;
 
     constructor() {
         super();
@@ -63,18 +87,9 @@ export class LoginReqMessage extends BaseMessage {
 /**
  * 登录响应消息
  */
-@ccclass('LoginRespMessage')
 export class LoginRespMessage extends BaseMessage {
-    public playerId: number;
-    public playerName:string;//玩家昵称
-    public favouriteWeapon:number;//玩家喜欢的武器
-    public winRate:number;//玩家胜率
 
-    public bladeRate:number;//刀的胜率
-    public swordRate:number;//剑的胜率
-    public spearRate:number;//矛的胜率
-    public bowRate:number;//弓的胜率
-    public knifeRate:number;//刀的胜率
+    public playerInfo:PlayerInfoMessage = null;
 
     constructor() {
         super();
@@ -83,9 +98,31 @@ export class LoginRespMessage extends BaseMessage {
 }
 
 /**
+ * 修改昵称请求消息
+ */
+export class RenameReqMessage extends BaseMessage {
+    public nickname: string;
+
+    constructor() {
+        super();
+        this.id = MessageType.RENAME_REQ;
+    }
+}
+
+/**
+ * 修改昵称响应消息
+ */
+export class RenameRespMessage extends BaseMessage {
+
+    constructor() {
+        super();
+        this.id = MessageType.RENAME_RESP;
+    }
+}
+
+/**
  * 申请对战请求消息
  */
-@ccclass('ApplyBattleReqMessage')
 export class ApplyBattleReqMessage extends BaseMessage {
     public weaponType: number;
 
@@ -98,7 +135,6 @@ export class ApplyBattleReqMessage extends BaseMessage {
 /**
  * 申请对战响应消息
  */
-@ccclass('ApplyBattleRespMessage')
 export class ApplyBattleRespMessage extends BaseMessage {
     public roleId: number;
     public weaponType: number;
@@ -112,7 +148,6 @@ export class ApplyBattleRespMessage extends BaseMessage {
 /**
  * 取消匹配请求消息
  */
-@ccclass('CancelMatchReqMessage')
 export class CancelMatchReqMessage extends BaseMessage {
     constructor() {
         super();
@@ -123,7 +158,6 @@ export class CancelMatchReqMessage extends BaseMessage {
 /**
  * 取消匹配响应消息
  */
-@ccclass('CancelMatchRespMessage')
 export class CancelMatchRespMessage extends BaseMessage {
     constructor() {
         super();
@@ -134,7 +168,6 @@ export class CancelMatchRespMessage extends BaseMessage {
 /**
  * 操作请求消息
  */
-@ccclass('OperationReqMessage')
 export class OperationReqMessage extends BaseMessage {
     public roleId: number = 0;
     public x: number;
@@ -174,7 +207,6 @@ export class OperationReqMessage extends BaseMessage {
 /**
  * 操作响应消息
  */
-@ccclass('OperationRespMessage')
 export class OperationRespMessage extends BaseMessage {
     public success: boolean;
 
@@ -187,7 +219,6 @@ export class OperationRespMessage extends BaseMessage {
 /**
  * 错误消息
  */
-@ccclass('ErrorMessage')
 export class ErrorMessage extends BaseMessage {
     public reqId: number;
     public errorCode: number;
@@ -201,7 +232,6 @@ export class ErrorMessage extends BaseMessage {
 /**
  * 匹配结果广播消息
  */
-@ccclass('MatchResultBroadMessage')
 export class MatchResultBroadMessage extends BaseMessage {
     public roles: RoleMessage[];
 
@@ -214,7 +244,6 @@ export class MatchResultBroadMessage extends BaseMessage {
 /**
  * 战斗开始推送消息
  */
-@ccclass('BattleStartPushMessage')
 export class BattleStartPushMessage extends BaseMessage {
     public battleState: number;
 
@@ -227,7 +256,6 @@ export class BattleStartPushMessage extends BaseMessage {
 /**
  * 战斗结果广播消息
  */
-@ccclass('BattleResultBroadMessage')
 export class BattleResultBroadMessage extends BaseMessage {
     public roles: RoleMessage[];
     public winRoleId: number;
@@ -241,7 +269,6 @@ export class BattleResultBroadMessage extends BaseMessage {
 /**
  * 战斗状态广播消息
  */
-@ccclass('BattleStateBroadMessage')
 export class BattleStateBroadMessage extends BaseMessage {
     public battleState: number;
 
@@ -254,7 +281,6 @@ export class BattleStateBroadMessage extends BaseMessage {
 /**
  * 角色信息消息
  */
-@ccclass('RoleMessage')
 export class RoleMessage {
     public roleId: number;
     public userName: string;
@@ -297,16 +323,49 @@ export class RoleMessage {
     }
 }
 
+export class PlayerInfoMessage{
+
+    public playerId: number;
+    public playerName:string;//玩家昵称
+    public favouriteWeapon:number;//玩家喜欢的武器
+    public winRate:number;//玩家胜率
+
+    public bladeRate:number;//刀的胜率
+    public swordRate:number;//剑的胜率
+    public spearRate:number;//矛的胜率
+    public bowRate:number;//弓的胜率
+    public knifeRate:number;//刀的胜率
+
+    constructor() {
+        this.playerId = 0;
+        this.playerName = "";
+        this.favouriteWeapon = 0;
+        this.winRate = 0;
+
+        this.bladeRate = 0;
+        this.swordRate = 0;
+        this.spearRate = 0;
+        this.bowRate = 0;
+        this.knifeRate = 0;
+    }
+}
+
 /**
  * 消息类型枚举
  */
 export enum MessageType {
     LOGIN_REQ = 1001,
     LOGIN_RESP = 1002,
+    REGISTER_REQ = 1003,
+    REGISTER_RESP = 1004,
+    RENAME_REQ = 1005,
+    RENAME_RESP = 1006,
+
     APPLY_BATTLE_REQ = 2001,
     APPLY_BATTLE_RESP = 2002,
     CANCEL_MATCH_REQ = 3001,
     CANCEL_MATCH_RESP = 3002,
+
     OPERATION_REQ = 4001,
     OPERATION_RESP = 4002,
 

@@ -13,6 +13,8 @@ const { ccclass,property } = _decorator;
 @ccclass('LoadingScene')
 export class LoadingScene extends Component implements IResourceProgressUI {
 
+    private static firstLoading:boolean = true;//首次加载
+
     @property(Label)
     private loadingText:Label = null; // 加载文本
     @property(ProgressBar)
@@ -20,7 +22,6 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     @property(Sprite)
     private background: Sprite = null; // 背景图
     
-    private static firstLoading:boolean = true;
     private nextScene: SceneEnum = null; // 目标场景
     private totalResources: number = 0; // 总资源数量
     private loadedResources: number = 0; // 已加载资源数量

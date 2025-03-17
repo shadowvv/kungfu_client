@@ -15,8 +15,12 @@ export class LoginScene extends Component {
     private background: Sprite = null;
     @property(Button)
     private loginButton: Button = null;
+    @property(Button)
+    private registerButton: Button = null;
     @property(EditBox)
     private userNameInputText: EditBox = null;
+    @property(EditBox)
+    private passwordInputText: EditBox = null;
 
     onLoad(): void {
         const loginResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.LoginScene);
