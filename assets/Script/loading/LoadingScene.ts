@@ -1,13 +1,14 @@
-import { _decorator, AudioClip, AudioSource, Component, director, Game, JsonAsset, Label, ProgressBar, resources, Sprite, SpriteAtlas, SpriteFrame } from 'cc';
+import { _decorator, AudioClip, Component, director, JsonAsset, Label, ProgressBar, Sprite, SpriteAtlas, SpriteFrame } from 'cc';
 import { IResourceProgressUI, ResourceManager } from '../ResourceManager';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
-import { ResourceTarget } from '../GameEnumAndConstants';
+import { ResourceTarget, SceneEnum } from '../GameEnumAndConstants';
 import { GameManager } from '../GameManager';
 import { MarqueeManager } from '../MarqueeManager';
+import { ServerConfig } from '../JsonObject/ServerConfig';
 const { ccclass,property } = _decorator;
 
 /**
- * 加载场景
+ * 加载资源场景
  */
 @ccclass('LoadingScene')
 export class LoadingScene extends Component implements IResourceProgressUI {
@@ -15,16 +16,17 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     @property(Label)
     private loadingText:Label = null; // 加载文本
     @property(ProgressBar)
-    private progressBar: ProgressBar = null; // 进度条组件
+    private progressBar: ProgressBar = null; // 进度条
     @property(Sprite)
-    private background: Sprite = null; // 背景图组件
+    private background: Sprite = null; // 背景图
     
-    private nextScene: string = ""; // 当前场景
+    private static firstLoading:boolean = true;
+    private nextScene: SceneEnum = null; // 目标场景
     private totalResources: number = 0; // 总资源数量
     private loadedResources: number = 0; // 已加载资源数量
 
     onLoad() {
-        this.nextScene = "loginScene"; // 当前场景
+        this.nextScene = SceneEnum.LoginScene;
         if(director["sceneParams"]){
             const params = director["sceneParams"];
             this.nextScene = params.targetScene;
@@ -32,50 +34,70 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     }
 
     async start() {
-        GameManager.showErrorLog("test error log");
-
         ResourceManager.setProgressUI(this);
         // 加载资源配置文件
-        await ResourceManager.loadJson("config/resourceConfig");
-        const resourceConfig = ResourceManager.getJson("config/resourceConfig");
-        if(!resourceConfig){
-            console.error("Failed to load resource config");
+        if(!ResourceConfig.getInstance().isLoaded()){
+            await ResourceManager.loadJson("config/resourceConfig");
+            const resourceConfig = ResourceManager.getJson("config/resourceConfig");
+            if(!resourceConfig){
+                MarqueeManager.addMessage("Failed to load resource config");
+            }
+            ResourceConfig.getInstance().loadConfig(resourceConfig);
         }
-        ResourceConfig.getInstance().loadConfig(resourceConfig);
 
-        // 加载背景图片
         const loadingResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.LoadingScene);
         if(!loadingResourceConfig){
-            console.error("Failed to load loading resource config");
+            MarqueeManager.addMessage("Failed to load loading resource config");
         }
-        ResourceManager.loadMultiple(loadingResourceConfig.backgroundFrameArray,SpriteFrame).then((spriteFrames) => {
-            // 随机选择一个背景图片
-            const randomIndex = Math.floor(Math.random() * spriteFrames.length);
-            const randomBackground = spriteFrames[randomIndex];
-            this.background.spriteFrame = randomBackground as SpriteFrame;
-        })
+
+        // 加载背景图片
+        const randomIndex = Math.floor(Math.random() * loadingResourceConfig.backgroundFrameArray.length);
+        let background = ResourceManager.getSpriteFrame(loadingResourceConfig.backgroundFrameArray[randomIndex]);
+        if(!background){
+            await ResourceManager.load(loadingResourceConfig.backgroundFrameArray[randomIndex],SpriteFrame);
+            background = ResourceManager.getSpriteFrame(loadingResourceConfig.backgroundFrameArray[randomIndex]);
+        }
+        this.background.spriteFrame = background;
         
         // 加载BGM
         const globalResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.Global);
         if(!globalResourceConfig){
-            console.error("Failed to load global config");
+            MarqueeManager.addMessage("Failed to load global config");
         }
-        ResourceManager.loadMultiple(globalResourceConfig.audioArray,AudioClip).then((audioClips) => {
-            GameManager.playBgm(audioClips[0] as AudioClip);
-        });
+        if(!GameManager.isPlayingBgm()){
+            ResourceManager.loadMultiple(globalResourceConfig.audioArray,AudioClip).then((audioClips) => {
+                GameManager.playBgm(audioClips[0] as AudioClip);
+            });
+        }
 
-        await this.loadResource(ResourceTarget.Global);
-        await this.loadResource(ResourceTarget.LoadingScene);
-        await this.loadResource(ResourceTarget.LoginScene);
+        // 创建网络连接
+        if(!ServerConfig.getInstance().isLoaded()){
+            await ResourceManager.load("config/serverConfig",JsonAsset);
+            ServerConfig.getInstance().loadConfig(ResourceManager.getJson("config/serverConfig") as JsonAsset);
+            GameManager.createNetController();
+        }
+
+        //加载全局资源
+        if(LoadingScene.firstLoading){
+            await this.loadResource(ResourceTarget.Global);
+            await this.loadResource(ResourceTarget.LoadingScene);
+            LoadingScene.firstLoading = false;
+        }
+        //加载目标场景资源
+        await this.loadResource(this.nextScene.toString() as ResourceTarget);
         
         //进入目标加载场景
         this.enterNextScene();
     }
 
-    async loadResource(resourceTarget: ResourceTarget){
-        const resourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(resourceTarget);
+    /**
+     * 加载资源
+     * @param targetResource 加载目标资源
+     */
+    async loadResource(targetResource: ResourceTarget){
+        const resourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(targetResource);
         if(!resourceConfig){
-            console.error("Failed to load resource config");
+            MarqueeManager.addMessage("Failed to load resource config");
         }   
 
         this.totalResources = resourceConfig.audioArray.length;
@@ -87,11 +109,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         await ResourceManager.loadMultiple(resourceConfig.spiritFrameArray,SpriteFrame);
         await ResourceManager.loadMultiple(resourceConfig.spiritAtlasArray,SpriteAtlas);
         await ResourceManager.loadMultiple(resourceConfig.jsonArray,JsonAsset);
-    }
-
-    enterNextScene() {
-        MarqueeManager.reset();
-        director.loadScene(this.nextScene); // 加载完成后切换到主场景
+        await ResourceManager.loadMultiple(resourceConfig.backgroundFrameArray,SpriteFrame);
     }
 
     updateProgress(): void {
@@ -104,6 +122,14 @@ export class LoadingScene extends Component implements IResourceProgressUI {
             this.loadingText.string = text;
             this.loadingText.updateRenderData(true);
         });
+    }
+
+    /**
+     * 进入下一个场景
+     */
+    private enterNextScene() {
+        MarqueeManager.reset();
+        director.loadScene(this.nextScene); // 加载完成后切换到主场景
     }
 }
 

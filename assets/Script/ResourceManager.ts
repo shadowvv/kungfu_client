@@ -1,13 +1,16 @@
 import { Asset, assetManager, AudioClip, JsonAsset, resources, SpriteAtlas, SpriteFrame } from "cc";
+import { MarqueeManager } from "./MarqueeManager";
 
 /**
  * 进度条UI接口
  */
 export interface IResourceProgressUI {
+    
     /**
      * 更新进度条
      */
     updateProgress(): void; // 更新进度条
+
     /**
      * 
      * @param text 更新加载资源名称
@@ -20,8 +23,14 @@ export interface IResourceProgressUI {
  */
 export class ResourceManager {
 
-    private static cache: Map<string, any> = new Map(); // 资源缓存
-    private static progressUI: IResourceProgressUI | null = null; // 进度条 UI
+    /**
+     * 资源缓存
+     */
+    private static cache: Map<string, any> = new Map();
+    /**
+     * 进度条 UI
+     */
+    private static progressUI: IResourceProgressUI | null = null;
 
     /**
      * 设置进度条 UI
@@ -58,7 +67,7 @@ export class ResourceManager {
         return new Promise<T>((resolve, reject) => {
             resources.load(path, type, (err, asset) => {
                 if (err) {
-                    console.error('Failed to load resource:', path, err);
+                    MarqueeManager.addMessage(`Failed to load resource:${path}`);
                     reject(err);
                 } else {
                     if (this.progressUI) {
@@ -92,7 +101,7 @@ export class ResourceManager {
         return new Promise<T[]>((resolve, reject) => {
             resources.loadDir(dirPath, type, (err, assets) => {
                 if (err) {
-                    console.error('Failed to load directory:', dirPath, err);
+                    MarqueeManager.addMessage(`Failed to load directory:${dirPath}`);
                     reject(err);
                 } else {
                     assets.forEach(asset => this.cache.set(asset.name, asset));

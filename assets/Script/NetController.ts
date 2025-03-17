@@ -1,24 +1,28 @@
-import { _decorator} from 'cc';
+import { _decorator, director} from 'cc';
 import {
-    ApplyBattleReqMessage, ApplyBattleRespMessage, BattleResultBroadMessage,
-    BattleStateBroadMessage, CancelMatchReqMessage, ErrorMessage, LoginReqMessage,
+    ApplyBattleReqMessage, ApplyBattleRespMessage, BaseMessage, BattleResultBroadMessage,
+    BattleStartPushMessage,
+    BattleStateBroadMessage, CancelMatchReqMessage, CancelMatchRespMessage, ErrorMessage, LoginReqMessage,
     LoginRespMessage, MatchResultBroadMessage, MessageType, OperationReqMessage,
     OperationRespMessage
 } from './Message';
-import { BattleManager } from './battle/BattleManager';
 import { ServerConfig } from './JsonObject/ServerConfig';
 import { ENVIRONMENT } from './GameEnumAndConstants';
+import { GlobalEventManager } from './GlobalEventManager';
+import { MarqueeManager } from './MarqueeManager';
 
 /**
  * 网络控制器，负责处理 WebSocket 连接和消息的发送和接收
  */
 export class NetController {
 
-    private ws: WebSocket = null;  // WebSocket 连接对象
-    private gameManager: BattleManager = null;  // 游戏管理器实例
+    /**
+     * WebSocket 连接对象
+     */
+    private ws: WebSocket = null;
 
-    constructor(gameManager: BattleManager) {
-        this.gameManager = gameManager;  // 通过构造函数初始化游戏管理器
+    constructor() {
+        GlobalEventManager.getInstance().on(MessageType.ERROR_MESSAGE, this.onError.bind(this));
     }
 
     /**
@@ -30,9 +34,9 @@ export class NetController {
         }
 
         // 获取服务器配置
-        const serverData = ServerConfig.getInstance().getServerData(ENVIRONMENT);  // 获取服务器配置
+        const serverData = ServerConfig.getInstance().getServerData(ENVIRONMENT);
 
-        // WebSocket 连接的 URL，当前为本地地址
+        // WebSocket 连接的 URL
         const wsUrl = `ws://${serverData.serverHost}/ws`;
         this.ws = new WebSocket(wsUrl);  // 创建新的 WebSocket 连接
 
@@ -40,7 +44,7 @@ export class NetController {
         this.ws.onopen = () => {
             console.log("WebSocket connected.");
             if(isReconnect){
-                this.gameManager.afterReconnect();
+                // this.gameManager.afterReconnect();
             }
         };
 
@@ -49,12 +53,12 @@ export class NetController {
 
         // 发生错误时触发
         this.ws.onerror = (event) => {
-            console.error("WebSocket encountered an error:", event);
+            MarqueeManager.addMessage(`WebSocket encountered an error:${event}`);
         };
 
         // 连接关闭时触发，3 秒后重连
         this.ws.onclose = (event) => {
-            console.log(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
+            MarqueeManager.addMessage(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
             setTimeout(() => this.connectWebSocket(true), serverData.reconnectInterval);
         };
     }
@@ -63,25 +67,86 @@ export class NetController {
      * 发送消息到服务器
      * @param message 消息对象
      */
-    private sendMessage(message: any): void {
+    sendMessage(message: BaseMessage): void {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-            const json = message.message2JSON();  // 将消息对象转换为 JSON
-            this.ws.send(json);  // 发送 JSON 数据
-            console.log("Sent message:", json);
+            const json = message.message2JSON();
+            this.ws.send(json);
         } else {
-            console.error("WebSocket is not open.");  // WebSocket 未连接时提示错误
+            MarqueeManager.addMessage("WebSocket is not open.");
         }
     }
 
     /**
-     * 登录请求
-     * @param userName 用户名
+     * 处理收到的服务器消息
+     * @param event WebSocket 消息事件
      */
-    login(userName: string): void {
-        const loginReq = new LoginReqMessage();
-        loginReq.userName = userName;
-        this.sendMessage(loginReq);  // 发送登录消息
+    onMessage(event: MessageEvent): void {
+        let jsonData = null;
+        try {
+            jsonData = JSON.parse(event.data);
+        } catch (e) {
+            MarqueeManager.addMessage(`Failed to parse message:${e}`);
+            return;
+        }
+
+        // 根据消息类型进行处理
+        let message: BaseMessage = null;
+        switch (jsonData.id) {
+            case MessageType.LOGIN_RESP:
+                message = LoginRespMessage.fromJSON<LoginRespMessage>(event.data, LoginRespMessage);
+                break;
+            case MessageType.APPLY_BATTLE_RESP:
+                message = ApplyBattleRespMessage.fromJSON<ApplyBattleRespMessage>(event.data, ApplyBattleRespMessage);
+                break;
+            case MessageType.CANCEL_MATCH_RESP:
+                message = CancelMatchRespMessage.fromJSON<CancelMatchRespMessage>(event.data, CancelMatchRespMessage);
+                break;
+            case MessageType.OPERATION_RESP:
+                message = OperationRespMessage.fromJSON<OperationRespMessage>(event.data, OperationRespMessage);
+                break;
+            case MessageType.MATCH_RESULT_BROAD:
+                message = MatchResultBroadMessage.fromJSON<MatchResultBroadMessage>(event.data, MatchResultBroadMessage);
+                break;
+            case MessageType.BATTLE_START_PUSH:
+                message = BattleStartPushMessage.fromJSON<BattleStartPushMessage>(event.data, BattleStartPushMessage);
+                break;
+            case MessageType.BATTLE_RESULT_BROAD:
+                message = BattleResultBroadMessage.fromJSON<BattleResultBroadMessage>(event.data, BattleResultBroadMessage);
+                break;
+            case MessageType.BATTLE_STATE_BROAD:
+                message = BattleStateBroadMessage.fromJSON<BattleStateBroadMessage>(event.data, BattleStateBroadMessage);
+                break;
+            case MessageType.ERROR_MESSAGE:
+                message = ErrorMessage.fromJSON<ErrorMessage>(event.data, ErrorMessage);
+                break;
+            default:
+                MarqueeManager.addMessage(`Unknown message received:${event.data}`);
+                break;
+        }
+
+        if (message){
+            GlobalEventManager.getInstance().emit(message);
+        }
     }
+
+    /**
+     * 处理错误消息
+     * @param errorMessage 错误消息对象
+     */
+    onError(errorMessage: ErrorMessage): void {
+        // TODO: 处理错误，例如通知用户或重试
+        MarqueeManager.addMessage(`Request ${errorMessage.reqId} failed with error code: ${errorMessage.errorCode}`);
+    }
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 申请战斗
@@ -118,82 +183,15 @@ export class NetController {
     }
 
     /**
-     * 处理收到的服务器消息
-     * @param event WebSocket 消息事件
-     */
-    onMessage(event: MessageEvent): void {
-        console.log("Received message:", event.data);
-        let jsonData = null;
-        try {
-            jsonData = JSON.parse(event.data);  // 尝试解析 JSON 数据
-        } catch (e) {
-            console.error("Failed to parse message:", e);  // 解析失败处理
-            return;
-        }
-
-        // 根据消息类型进行处理
-        switch (jsonData.id) {
-            case MessageType.LOGIN_RESP:
-                const loginRespMessage = LoginRespMessage.fromJSON<LoginRespMessage>(event.data, LoginRespMessage);
-                this.onLoginResp(loginRespMessage);  // 处理登录响应
-                break;
-            case MessageType.APPLY_BATTLE_RESP:
-                const applyBattleRespMessage = ApplyBattleRespMessage.fromJSON<ApplyBattleRespMessage>(event.data, ApplyBattleRespMessage);
-                this.onApplyBattleResp(applyBattleRespMessage);  // 处理战斗申请响应
-                break;
-            case MessageType.CANCEL_MATCH_RESP:
-                this.onMatchCancel();  // 处理取消匹配响应
-                break;
-            case MessageType.OPERATION_RESP:
-                const operationRespMessage = OperationRespMessage.fromJSON<OperationRespMessage>(event.data, OperationRespMessage);
-                this.onOperationResp(operationRespMessage);  // 处理操作响应
-                break;
-            case MessageType.MATCH_RESULT_BROAD:
-                const matchResultBroadMessage = MatchResultBroadMessage.fromJSON<MatchResultBroadMessage>(event.data, MatchResultBroadMessage);
-                this.onMatchResultBroad(matchResultBroadMessage);  // 处理匹配结果广播
-                break;
-            case MessageType.BATTLE_START_PUSH:
-                this.onBattleStart();  // 处理战斗开始通知
-                break;
-            case MessageType.BATTLE_RESULT_BROAD:
-                const battleResultBroadMessage = BattleResultBroadMessage.fromJSON<BattleResultBroadMessage>(event.data, BattleResultBroadMessage);
-                this.onBattleResultBroad(battleResultBroadMessage);  // 处理战斗结果广播
-                break;
-            case MessageType.BATTLE_STATE_BROAD:
-                const battleStateBroadMessage = BattleStateBroadMessage.fromJSON<BattleStateBroadMessage>(event.data, BattleStateBroadMessage);
-                this.onBattleStateChange(battleStateBroadMessage.battleState);  // 处理战斗状态变化
-                break;
-            case MessageType.ERROR_MESSAGE:
-                const errorMessage = ErrorMessage.fromJSON<ErrorMessage>(event.data, ErrorMessage);
-                this.onError(errorMessage);  // 处理错误消息
-                break;
-            default:
-                console.warn("Unknown message received:", event.data);  // 处理未知消息
-                break;
-        }
-    }
-
-    /**
-     * 处理错误消息
-     * @param errorMessage 错误消息对象
-     */
-    onError(errorMessage: ErrorMessage): void {
-        console.error(`Request ${errorMessage.reqId} failed with error code: ${errorMessage.errorCode}`);
-        // TODO: 处理错误，例如通知用户或重试
-    }
-
-    /**
      * 处理登录响应
      * @param loginRespMessage 登录响应消息对象
      */
     onLoginResp(loginRespMessage: LoginRespMessage): void {
-        if (loginRespMessage.success) {  // 检查登录是否成功
-            console.log("Login successful for player:", loginRespMessage.playerId);
-            this.gameManager.afterLogin(loginRespMessage.playerId);  // 通知游戏管理器登录成功，传递玩家 ID
-        } else {
-            console.error("Login failed.");  // 记录登录失败
-            // TODO: 处理登录失败，例如提示用户或重试
+        console.log("Login successful for player:", loginRespMessage.playerId);
+        director["sceneParams"] = {
+            targetScene: "mainScene",
         }
+        director.loadScene("loadingScene");
     }
 
     /**
@@ -202,7 +200,7 @@ export class NetController {
      */
     onApplyBattleResp(applyBattleRespMessage: ApplyBattleRespMessage): void {
         // 通知游戏管理器处理战斗申请响应，传递角色 ID 和武器类型
-        this.gameManager.onApplyBattleResp(applyBattleRespMessage.roleId, applyBattleRespMessage.weaponType);
+        // this.gameManager.onApplyBattleResp(applyBattleRespMessage.roleId, applyBattleRespMessage.weaponType);
     }
 
     /**
@@ -219,7 +217,7 @@ export class NetController {
      */
     onMatchResultBroad(matchResultBroadMessage: MatchResultBroadMessage): void {
         // 通知游戏管理器处理匹配结果，传递匹配到的角色信息
-        this.gameManager.onMatchResultBroad(matchResultBroadMessage.roles);
+        // this.gameManager.onMatchResultBroad(matchResultBroadMessage.roles);
     }
 
     /**
@@ -227,7 +225,7 @@ export class NetController {
      */
     onBattleStart(): void {
         // 通知游戏管理器战斗开始，更新游戏状态
-        this.gameManager.battleStart();
+        // this.gameManager.battleStart();
     }
 
     /**
@@ -236,7 +234,7 @@ export class NetController {
      */
     onBattleStateChange(battleState: number): void {
         // 通知游戏管理器战斗状态发生变化
-        this.gameManager.onBattleStateChange(battleState);
+        // this.gameManager.onBattleStateChange(battleState);
     }
 
     /**
@@ -255,7 +253,7 @@ export class NetController {
     onBattleResultBroad(battleResultBroadMessage: BattleResultBroadMessage): void {
         console.log("Battle result received:", battleResultBroadMessage);  // 记录战斗结果
         // 通知游戏管理器处理战斗结果，传递参与战斗的角色信息
-        this.gameManager.onBattleOperation(battleResultBroadMessage.roles);
+        // this.gameManager.onBattleOperation(battleResultBroadMessage.roles);
         // TODO: 处理战斗结果，例如更新 UI 或显示战斗胜负
     }
 

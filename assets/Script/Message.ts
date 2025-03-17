@@ -66,7 +66,15 @@ export class LoginReqMessage extends BaseMessage {
 @ccclass('LoginRespMessage')
 export class LoginRespMessage extends BaseMessage {
     public playerId: number;
-    public success: boolean;
+    public playerName:string;//玩家昵称
+    public favouriteWeapon:number;//玩家喜欢的武器
+    public winRate:number;//玩家胜率
+
+    public bladeRate:number;//刀的胜率
+    public swordRate:number;//剑的胜率
+    public spearRate:number;//矛的胜率
+    public bowRate:number;//弓的胜率
+    public knifeRate:number;//刀的胜率
 
     constructor() {
         super();

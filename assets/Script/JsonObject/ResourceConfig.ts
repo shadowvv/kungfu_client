@@ -17,6 +17,7 @@ export class ResourceConfig {
 
     // ❌ 修正：用 Map<string, resourceData> 代替数组
     private resources: Map<string, resourceData> = new Map();
+    private loaded: boolean = false;
 
     private constructor() {}
 
@@ -51,6 +52,11 @@ export class ResourceConfig {
             // ✅ 修正：用 Map 存储
             this.resources.set(data.name, resource);
         }
+        this.loaded = true;
+    }
+
+    isLoaded() {
+        return this.loaded;
     }
 
     /**

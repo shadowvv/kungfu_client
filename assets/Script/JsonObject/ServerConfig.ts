@@ -15,7 +15,8 @@ export class ServerConfig {
         return ServerConfig.instance;
     }
 
-    private servers: ServerData[] = [];
+    private resources: Map<string, ServerData> = new Map();
+    private loaded:boolean = false;
 
     private constructor() {
     }
@@ -23,23 +24,23 @@ export class ServerConfig {
     /**
      * 加载配置文件
      */
-    loadConfig(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            resources.load(ServerConfig.CONFIG_FILE, JsonAsset, (err, jsonAsset) => {
-                if (err) {
-                    console.error('Failed to load config:', err);
-                    reject(err);
-                    return;
-                }
-                let json = jsonAsset.json;
-                for (let i = 0; i < json.length; i++) {
-                    let server = new ServerData(json[i].environment, json[i].serverHost, json[i].reconnectInterval);
-                    this.servers[json[i].environment] = server;
-                }
-                console.log("ServerConfig loaded successfully.");
-                resolve();
-            });
-        });
+    loadConfig(jsonAsset: JsonAsset): void {
+        const json = jsonAsset.json;
+
+        if (!Array.isArray(json)) {
+            console.error("❌ loadConfig 失败，json 不是数组", json);
+            return;
+        }
+
+        for (let i = 0; i < json.length; i++) {
+            let server = new ServerData(json[i].environment, json[i].serverHost, json[i].reconnectInterval);
+            this.resources.set(json[i].environment, server);
+        }
+        this.loaded = true;
+    }
+
+    isLoaded() {
+        return this.loaded;
     }
 
     /**
@@ -48,7 +49,7 @@ export class ServerConfig {
      * @returns 获取服务器数据
      */
     getServerData(environment: string): ServerData {
-        return this.servers[environment];
+        return this.resources.get(environment);
     }
 
 }

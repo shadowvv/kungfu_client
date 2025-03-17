@@ -1,8 +1,11 @@
-import { _decorator, Button, Component, EditBox, Node, Sprite } from 'cc';
-import { ResourceTarget } from '../GameEnumAndConstants';
+import { _decorator, Button, Component, director, EditBox, Sprite } from 'cc';
+import { ResourceTarget, SceneEnum } from '../GameEnumAndConstants';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
 import { ResourceManager } from '../ResourceManager';
 import { GameManager } from '../GameManager';
+import { MarqueeManager } from '../MarqueeManager';
+import { GlobalEventManager } from '../GlobalEventManager';
+import { LoginReqMessage, LoginRespMessage, MessageType } from '../Message';
 const { ccclass, property } = _decorator;
 
 @ccclass('LoginScene')
@@ -15,23 +18,19 @@ export class LoginScene extends Component {
     @property(EditBox)
     private userNameInputText: EditBox = null;
 
-    private username: string;
-
     onLoad(): void {
         const loginResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.LoginScene);
         if(!loginResourceConfig){
-            console.error("Failed to load login resource config");
+            MarqueeManager.addMessage("Failed to load login resource config");
         }
 
         const backgroundFrame = ResourceManager.getSpriteFrame(loginResourceConfig.backgroundFrameArray[0]);
         if(!backgroundFrame){
-            console.error("Failed to load background frame");
+            MarqueeManager.addMessage("Failed to load background frame");
         }
-        // this.background.spriteFrame = backgroundFrame;
-    }
+        this.background.spriteFrame = backgroundFrame;
 
-    start() {
-        GameManager.showErrorLog("test login log");
+        GlobalEventManager.getInstance().on(MessageType.LOGIN_RESP, this.afterLogin.bind(this));
     }
 
     /**
@@ -42,20 +41,34 @@ export class LoginScene extends Component {
             GameManager.showErrorLog("用户名不能为空！");
             return;
         }
-        this.username = this.userNameInputText.string;
-        GameManager.sendLoginMessage(this.username);
+
+        const loginReq = new LoginReqMessage();
+        loginReq.userName = this.userNameInputText.string;
+        GameManager.sendMessage(loginReq);
     }
 
-    // /**
-    //  * 登录成功后的回调
-    //  * @param playerId 玩家 ID
-    //  */
-    // afterLogin(playerId: number): void {
-    //     this.playerId = playerId;
+    /**
+     * 登录成功后的回调
+     * @param playerId 玩家 ID
+     */
+    afterLogin(loginRespMessage: LoginRespMessage): void {
+        // this.playerId = playerId;
 
-    //     this.loginButton.node.active = false;
-    //     this.userNameInputText.node.active = false;
-    // }
+        this.loginButton.node.active = false;
+        this.userNameInputText.node.active = false;
+        
+        MarqueeManager.reset();
+        director["sceneParams"] = {
+            targetScene: "mainScene",
+        }
+        director.loadScene(SceneEnum.LoadingScene);
+    }
+
+    destroy(): boolean {
+        const result = super.destroy();
+        GlobalEventManager.getInstance().off(MessageType.LOGIN_RESP, this.afterLogin.bind(this));
+        return result;
+    }
 }
 
 

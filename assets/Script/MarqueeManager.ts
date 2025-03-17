@@ -60,27 +60,27 @@ export class MarqueeManager extends Component {
         }
     
         // 重新创建 `marqueeNode`（如果丢失）
-        // if (!this.marqueeNode) {
-        //     console.warn("marqueeNode was lost, recreating...");
-        //     this.createMarqueeUI(); // 重新创建 UI
-        // }
+        if (!this.marqueeNode) {
+            console.warn("marqueeNode was lost, recreating...");
+            this.createMarqueeUI(); // 重新创建 UI
+        }
     
         // 重新创建 `marqueeLabel`（如果丢失）
-        // if (!this.marqueeLabel) {
-        //     console.warn("marqueeLabel was lost, recreating...");
-        //     const labelNode = new Node("MarqueeLabel");
-        //     this.marqueeLabel = labelNode.addComponent(Label);
-        //     this.marqueeLabel.fontSize = 30;
-        //     this.marqueeLabel.lineHeight = 40;
-        //     this.marqueeNode.addChild(labelNode);
-        // }
+        if (!this.marqueeLabel) {
+            console.warn("marqueeLabel was lost, recreating...");
+            const labelNode = new Node("MarqueeLabel");
+            this.marqueeLabel = labelNode.addComponent(Label);
+            this.marqueeLabel.fontSize = 30;
+            this.marqueeLabel.lineHeight = 40;
+            this.marqueeNode.addChild(labelNode);
+        }
     
-        // **优化点：如果 marqueeNode 丢失，则重新创建**
+        // 如果 marqueeNode 丢失，则重新创建
         if (!this.marqueeNode || !this.marqueeNode.isValid) {
             console.warn("marqueeNode was lost, recreating...");
             this.createMarqueeUI();
         }
-        // canvas.node.addChild(this.marqueeNode);
+
         // 确保 `marqueeNode` 在 `Canvas` 之下
         if (this.marqueeNode.parent !== canvas.node) {
             console.warn("marqueeNode parent is incorrect, reassigning...");
@@ -88,8 +88,6 @@ export class MarqueeManager extends Component {
             this.marqueeNode.setSiblingIndex(999);
         }
     }
-    
-    
 
     private createMarqueeUI() {
         // 创建走马灯节点
@@ -99,17 +97,17 @@ export class MarqueeManager extends Component {
         transform.height = 50;
         this.marqueeNode.setPosition(0, 250);
 
-        // 将走马灯节点挂载到常驻节点（this.node）
-        this.node.addChild(this.marqueeNode);
-
         // 创建 Label
         const labelNode = new Node("MarqueeLabel");
         this.marqueeLabel = labelNode.addComponent(Label);
         this.marqueeLabel.fontSize = 30;
         this.marqueeLabel.lineHeight = 40;
+        this.marqueeLabel.string = "";
         labelNode.setPosition(300, 0);
         this.marqueeNode.addChild(labelNode);
 
+        // 将走马灯节点挂载到常驻节点（this.node）
+        this.node.addChild(this.marqueeNode);
         this.marqueeNode.setSiblingIndex(999);
     }
 
@@ -120,12 +118,17 @@ export class MarqueeManager extends Component {
         MarqueeManager.instance.playNext();
     }
 
+    /**
+     * 重置走马灯节点
+     */
     static reset() {
         MarqueeManager.instance.resetNode();
     }
 
+    /**
+     * 重置走马灯节点位置到常驻节点
+     */
     resetNode() {
-        // 将走马灯节点挂载到常驻节点（this.node）
         this.node.addChild(this.marqueeNode);
     }
 
@@ -142,12 +145,13 @@ export class MarqueeManager extends Component {
 
         // 计算滚动时间（速度固定，每秒 100 像素）
         const textWidth = this.marqueeLabel.node.getComponent(UITransform).width;
-        const duration = (textWidth + 800) / 100; // 800 代表整个滚动范围
+        const duration = (textWidth + 800) / 300; // 800 代表整个滚动范围
         // 开始滚动动画
         tween(this.marqueeLabel.node)
             .to(duration, { position: new Vec3(-400 - textWidth, 0, 0) }) // 向左滚动
             .call(() => {
                 this.isPlaying = false;
+                this.marqueeLabel.string = "";
                 this.playNext(); // 播放下一条
             })
             .start();

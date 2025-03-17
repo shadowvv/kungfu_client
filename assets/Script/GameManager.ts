@@ -1,7 +1,8 @@
 import { _decorator, AudioClip, AudioSource, Component, director, Label, Node } from 'cc';
 import { NetController } from './NetController';
-import { PlayerData } from './PlayerData';
+import { PlayerData } from './main/PlayerData';
 import { MarqueeManager } from './MarqueeManager';
+import { BaseMessage, LoginReqMessage } from './Message';
 const { ccclass, property } = _decorator;
 
 /**
@@ -36,9 +37,13 @@ export class GameManager extends Component {
     }
 
     start() {
+        
+    }
+
+    static createNetController() {
         //FIXME: 这里的 NetController 传入了 null，实际上应该传入一个 BattleManager 实例
-        this.netController = new NetController(null);
-        this.netController.connectWebSocket(false);
+        this.instance.netController = new NetController();
+        this.instance.netController.connectWebSocket(false);
     }
 
     /**
@@ -51,12 +56,12 @@ export class GameManager extends Component {
         this.instance.audioSource.play();
     }
 
-    /**
-     * 发送登录消息
-     * @param username 用户名
-     */
-    static sendLoginMessage(username: string) {
-        this.instance.netController.login(username);
+    static isPlayingBgm() {
+        return this.instance.audioSource.playing;
+    }
+
+    static sendMessage(message: BaseMessage) {
+        this.instance.netController.sendMessage(message);
     }
 
     static showErrorLog(log: string) {

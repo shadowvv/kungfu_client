@@ -5,6 +5,16 @@ export const ENVIRONMENT:string = 'dev';
 // export const environment:string = 'prod';
 
 /**
+ * 场景
+ */
+export enum SceneEnum {
+    LoadingScene = "loadingScene",
+    LoginScene = "loginScene",
+    MainScene = "mainScene",
+    BattleScene = "battleScene",
+}
+
+/**
  * 资源
  */
 export enum ResourceTarget {
