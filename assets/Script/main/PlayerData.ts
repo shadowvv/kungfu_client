@@ -1,4 +1,5 @@
 import { WeaponEnum } from "../GameEnumAndConstants";
+import { PlayerInfoMessage } from "../Message";
 
 /**
  * 玩家数据
@@ -6,7 +7,7 @@ import { WeaponEnum } from "../GameEnumAndConstants";
 export class PlayerData{
 
     private playerId:number;//玩家id
-    private playerName:string;//玩家昵称
+    private playerName:string;//玩家名称
     private favouriteWeapon:WeaponEnum;//玩家喜欢的武器
     private winRate:number;//玩家胜率
 
@@ -26,6 +27,18 @@ export class PlayerData{
         this.spearRate = 0;
         this.bowRate = 0;
         this.knifeRate = 0;
+    }
+
+    init(PlayerInfoMessage: PlayerInfoMessage) {
+        this.playerId = PlayerInfoMessage.playerId;
+        this.playerName = PlayerInfoMessage.playerName;
+        this.favouriteWeapon = PlayerInfoMessage.favouriteWeapon;
+        this.winRate = PlayerInfoMessage.winRate;
+        this.bladeRate = PlayerInfoMessage.bladeRate;
+        this.swordRate = PlayerInfoMessage.swordRate;
+        this.spearRate = PlayerInfoMessage.spearRate;
+        this.bowRate = PlayerInfoMessage.bowRate;
+        this.knifeRate = PlayerInfoMessage.knifeRate;
     }
 
     setPlayerName(name:string){

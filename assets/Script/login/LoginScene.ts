@@ -5,7 +5,7 @@ import { ResourceManager } from '../ResourceManager';
 import { GameManager } from '../GameManager';
 import { MarqueeManager } from '../MarqueeManager';
 import { GlobalEventManager } from '../GlobalEventManager';
-import { LoginReqMessage, LoginRespMessage, MessageType } from '../Message';
+import { LoginReqMessage, LoginRespMessage, MessageType, RegisterReqMessage, RegisterRespMessage,PlayerInfoMessage } from '../Message';
 const { ccclass, property } = _decorator;
 
 @ccclass('LoginScene')
@@ -35,6 +35,26 @@ export class LoginScene extends Component {
         this.background.spriteFrame = backgroundFrame;
 
         GlobalEventManager.getInstance().on(MessageType.LOGIN_RESP, this.afterLogin.bind(this));
+        GlobalEventManager.getInstance().on(MessageType.REGISTER_RESP, this.registerSuccess.bind(this));
+    }
+
+    register(): void {
+        if (this.userNameInputText.string === "") {
+            GameManager.showErrorLog("用户名不能为空！");
+            return;
+        }
+        if (this.passwordInputText.string === "") {
+            GameManager.showErrorLog("密码不能为空！");
+            return;
+        }
+        const registerReq = new RegisterReqMessage();
+        registerReq.userName = this.userNameInputText.string;
+        registerReq.password = this.passwordInputText.string;
+        GameManager.sendMessage(registerReq);
+    }
+
+    registerSuccess(registerRespMessage:RegisterRespMessage): void {
+        this.operationSuccess(registerRespMessage.playerInfo);
     }
 
     /**
@@ -45,9 +65,14 @@ export class LoginScene extends Component {
             GameManager.showErrorLog("用户名不能为空！");
             return;
         }
+        if (this.passwordInputText.string === "") {
+            GameManager.showErrorLog("密码不能为空！");
+            return;
+        }
 
         const loginReq = new LoginReqMessage();
         loginReq.userName = this.userNameInputText.string;
+        loginReq.password = this.passwordInputText.string;
         GameManager.sendMessage(loginReq);
     }
 
@@ -56,10 +81,16 @@ export class LoginScene extends Component {
      * @param playerId 玩家 ID
      */
     afterLogin(loginRespMessage: LoginRespMessage): void {
-        // this.playerId = playerId;
+        this.operationSuccess(loginRespMessage.playerInfo)
+    }
+
+    operationSuccess(PlayerInfoMessage: PlayerInfoMessage){
+        GameManager.initPlayerData(PlayerInfoMessage);
 
         this.loginButton.node.active = false;
+        this.registerButton.node.active = false;
         this.userNameInputText.node.active = false;
+        this.passwordInputText.node.active = false;
         
         MarqueeManager.reset();
         director["sceneParams"] = {
@@ -71,6 +102,7 @@ export class LoginScene extends Component {
     destroy(): boolean {
         const result = super.destroy();
         GlobalEventManager.getInstance().off(MessageType.LOGIN_RESP, this.afterLogin.bind(this));
+        GlobalEventManager.getInstance().off(MessageType.REGISTER_RESP, this.registerSuccess.bind(this));
         return result;
     }
 }

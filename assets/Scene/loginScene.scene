@@ -1858,7 +1858,7 @@
     },
     "component": "",
     "_componentId": "eac09w78Q9Hy4jSGUikPehs",
-    "handler": "login",
+    "handler": "register",
     "customEventData": ""
   },
   {

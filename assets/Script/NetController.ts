@@ -187,7 +187,6 @@ export class NetController {
      * @param loginRespMessage 登录响应消息对象
      */
     onLoginResp(loginRespMessage: LoginRespMessage): void {
-        console.log("Login successful for player:", loginRespMessage.playerId);
         director["sceneParams"] = {
             targetScene: "mainScene",
         }

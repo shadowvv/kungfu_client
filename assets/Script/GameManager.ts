@@ -2,7 +2,7 @@ import { _decorator, AudioClip, AudioSource, Component, director, Label, Node } 
 import { NetController } from './NetController';
 import { PlayerData } from './main/PlayerData';
 import { MarqueeManager } from './MarqueeManager';
-import { BaseMessage, LoginReqMessage } from './Message';
+import { BaseMessage, LoginReqMessage, PlayerInfoMessage } from './Message';
 const { ccclass, property } = _decorator;
 
 /**
@@ -44,6 +44,11 @@ export class GameManager extends Component {
         //FIXME: 这里的 NetController 传入了 null，实际上应该传入一个 BattleManager 实例
         this.instance.netController = new NetController();
         this.instance.netController.connectWebSocket(false);
+    }
+
+    static initPlayerData(PlayerInfoMessage: PlayerInfoMessage) {
+        this.instance.playerData = new PlayerData();
+        this.instance.playerData.init(PlayerInfoMessage);
     }
 
     /**
