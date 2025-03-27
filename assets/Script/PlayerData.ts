@@ -1,5 +1,5 @@
-import { WeaponEnum } from "../GameEnumAndConstants";
-import { PlayerInfoMessage } from "../Message";
+import { WeaponEnum } from "./GameEnumAndConstants";
+import { PlayerInfoMessage } from "./Message";
 
 /**
  * 玩家数据
@@ -19,7 +19,7 @@ export class PlayerData{
 
     constructor(){
         this.playerId = 0;
-        this.playerName = "";
+        this.playerName = "test";
         this.favouriteWeapon = 0;
         this.winRate = 0;
         this.bladeRate = 0;

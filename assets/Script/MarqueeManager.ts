@@ -1,14 +1,42 @@
 import { _decorator, Component, Label, Node, director, tween, UITransform, Vec3, Canvas } from 'cc';
-const { ccclass, property } = _decorator;
+const { ccclass } = _decorator;
 
+/**
+ * 走马灯管理器
+ */
 @ccclass('MarqueeManager')
 export class MarqueeManager extends Component {
     
+    /**
+     * 获取单例实例
+     */
     private static instance: MarqueeManager = null;
-    private marqueeLabel: Label = null;
-    private messages: string[] = [];
-    private isPlaying: boolean = false;
+
+    /** 添加一条走马灯消息 */
+    static addMessage(message: string) {
+        if (!MarqueeManager.instance) return;
+        MarqueeManager.instance.messages.push(message);
+        MarqueeManager.instance.playNext();
+    }
+
+    /**
+     * 重置走马灯节点
+     */
+    static reset() {
+        MarqueeManager.instance.resetNode();
+    }
+    
     private marqueeNode: Node = null;
+    private marqueeLabel: Label = null;
+
+    /**
+     * 走马灯消息列表
+     */
+    private messages: string[] = [];
+    /**
+     * 是否正在播放中
+     */
+    private isPlaying: boolean = false;
 
     onLoad() {
         if (MarqueeManager.instance) {
@@ -25,8 +53,6 @@ export class MarqueeManager extends Component {
             console.error("No Canvas found in the scene!");
             return;
         }
-
-        // 设置当前节点为常驻节点（切换场景不会销毁）
         director.addPersistRootNode(this.node);
 
         // 确保 UI 层级最高
@@ -111,20 +137,6 @@ export class MarqueeManager extends Component {
         this.marqueeNode.setSiblingIndex(999);
     }
 
-    /** 添加一条走马灯消息 */
-    static addMessage(message: string) {
-        if (!MarqueeManager.instance) return;
-        MarqueeManager.instance.messages.push(message);
-        MarqueeManager.instance.playNext();
-    }
-
-    /**
-     * 重置走马灯节点
-     */
-    static reset() {
-        MarqueeManager.instance.resetNode();
-    }
-
     /**
      * 重置走马灯节点位置到常驻节点
      */
@@ -153,7 +165,6 @@ export class MarqueeManager extends Component {
                 this.isPlaying = false;
                 this.marqueeLabel.string = "";
                 this.playNext(); // 播放下一条
-            })
-            .start();
+            }).start();
     }
 }

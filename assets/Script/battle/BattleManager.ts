@@ -1,5 +1,5 @@
 import { _decorator, Component, Node, Prefab, instantiate, Button, RichText, EditBox} from 'cc';
-import { Player } from '../main/Player';
+import { Player } from './Player';
 import { GameState, getWaitActionTick, getWaitCommandTick } from '../GameEnumAndConstants';
 import { NetController } from '../NetController';
 import { RoleMessage } from '../Message';

@@ -1,5 +1,5 @@
 import { Asset, assetManager, AudioClip, JsonAsset, resources, SpriteAtlas, SpriteFrame } from "cc";
-import { MarqueeManager } from "./MarqueeManager";
+import { GameManager } from "./GameManager";
 
 /**
  * 进度条UI接口
@@ -67,7 +67,7 @@ export class ResourceManager {
         return new Promise<T>((resolve, reject) => {
             resources.load(path, type, (err, asset) => {
                 if (err) {
-                    MarqueeManager.addMessage(`Failed to load resource:${path}`);
+                    GameManager.showErrorLog(`Failed to load resource:${path}`);
                     reject(err);
                 } else {
                     if (this.progressUI) {
@@ -101,7 +101,7 @@ export class ResourceManager {
         return new Promise<T[]>((resolve, reject) => {
             resources.loadDir(dirPath, type, (err, assets) => {
                 if (err) {
-                    MarqueeManager.addMessage(`Failed to load directory:${dirPath}`);
+                    GameManager.showErrorLog(`Failed to load directory:${dirPath}`);
                     reject(err);
                 } else {
                     assets.forEach(asset => this.cache.set(asset.name, asset));

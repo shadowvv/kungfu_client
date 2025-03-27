@@ -9,7 +9,7 @@ import {
 import { ServerConfig } from './JsonObject/ServerConfig';
 import { ENVIRONMENT } from './GameEnumAndConstants';
 import { GlobalEventManager } from './GlobalEventManager';
-import { MarqueeManager } from './MarqueeManager';
+import { GameManager } from './GameManager';
 
 /**
  * 网络控制器，负责处理 WebSocket 连接和消息的发送和接收
@@ -53,12 +53,12 @@ export class NetController {
 
         // 发生错误时触发
         this.ws.onerror = (event) => {
-            MarqueeManager.addMessage(`WebSocket encountered an error:${event}`);
+            GameManager.showErrorLog(`WebSocket encountered an error:${event}`);
         };
 
         // 连接关闭时触发，3 秒后重连
         this.ws.onclose = (event) => {
-            MarqueeManager.addMessage(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
+            GameManager.showErrorLog(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
             setTimeout(() => this.connectWebSocket(true), serverData.reconnectInterval);
         };
     }
@@ -72,7 +72,7 @@ export class NetController {
             const json = message.message2JSON();
             this.ws.send(json);
         } else {
-            MarqueeManager.addMessage("WebSocket is not open.");
+            GameManager.showErrorLog("WebSocket is not open.");
         }
     }
 
@@ -85,7 +85,7 @@ export class NetController {
         try {
             jsonData = JSON.parse(event.data);
         } catch (e) {
-            MarqueeManager.addMessage(`Failed to parse message:${e}`);
+            GameManager.showErrorLog(`Failed to parse message:${e}`);
             return;
         }
 
@@ -120,7 +120,7 @@ export class NetController {
                 message = ErrorMessage.fromJSON<ErrorMessage>(event.data, ErrorMessage);
                 break;
             default:
-                MarqueeManager.addMessage(`Unknown message received:${event.data}`);
+                GameManager.showErrorLog(`Unknown message received:${event.data}`);
                 break;
         }
 
@@ -135,28 +135,13 @@ export class NetController {
      */
     onError(errorMessage: ErrorMessage): void {
         // TODO: 处理错误，例如通知用户或重试
-        MarqueeManager.addMessage(`Request ${errorMessage.reqId} failed with error code: ${errorMessage.errorCode}`);
+        GameManager.showErrorLog(`Request ${errorMessage.reqId} failed with error code: ${errorMessage.errorCode}`);
     }
 
-
-
-
-
-
-
-
-
-
-
-    /**
-     * 申请战斗
-     * @param weaponType 武器类型
-     */
-    applyBattle(weaponType: number): void {
-        const applyBattleReq = new ApplyBattleReqMessage();
-        applyBattleReq.weaponType = weaponType;
-        this.sendMessage(applyBattleReq);  // 发送战斗申请消息
+    closeWebSocket() {
+        
     }
+
 
     /**
      * 取消匹配
@@ -180,26 +165,6 @@ export class NetController {
         operationReq.setPositionY(y);
         operationReq.setFaceAngle(lastAngle);
         this.sendMessage(operationReq);  // 发送操作请求
-    }
-
-    /**
-     * 处理登录响应
-     * @param loginRespMessage 登录响应消息对象
-     */
-    onLoginResp(loginRespMessage: LoginRespMessage): void {
-        director["sceneParams"] = {
-            targetScene: "mainScene",
-        }
-        director.loadScene("loadingScene");
-    }
-
-    /**
-     * 处理战斗申请响应
-     * @param applyBattleRespMessage 战斗申请响应消息对象
-     */
-    onApplyBattleResp(applyBattleRespMessage: ApplyBattleRespMessage): void {
-        // 通知游戏管理器处理战斗申请响应，传递角色 ID 和武器类型
-        // this.gameManager.onApplyBattleResp(applyBattleRespMessage.roleId, applyBattleRespMessage.weaponType);
     }
 
     /**

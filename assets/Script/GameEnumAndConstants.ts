@@ -1,8 +1,8 @@
 import { _decorator, Game } from 'cc';
 import { GameConfig } from './JsonObject/GameConfig';
 
-// export const ENVIRONMENT:string = 'dev';
-export const ENVIRONMENT:string = 'prod';
+export const ENVIRONMENT:string = 'dev';
+// export const ENVIRONMENT:string = 'prod';
 
 /**
  * 场景
@@ -22,6 +22,7 @@ export enum ResourceTarget {
     LoadingScene = "loadingScene",
     LoginScene = "loginScene",
     MainScene = "mainScene",
+    MatchScene = "matchScene",
     BattleScene = "battleScene",
     Blade = "blade",
     Knife = "knife",

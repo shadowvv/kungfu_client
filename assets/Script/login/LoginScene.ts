@@ -3,7 +3,6 @@ import { ResourceTarget, SceneEnum } from '../GameEnumAndConstants';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
 import { ResourceManager } from '../ResourceManager';
 import { GameManager } from '../GameManager';
-import { MarqueeManager } from '../MarqueeManager';
 import { GlobalEventManager } from '../GlobalEventManager';
 import { LoginReqMessage, LoginRespMessage, MessageType, RegisterReqMessage, RegisterRespMessage,PlayerInfoMessage } from '../Message';
 const { ccclass, property } = _decorator;
@@ -25,12 +24,12 @@ export class LoginScene extends Component {
     onLoad(): void {
         const loginResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.LoginScene);
         if(!loginResourceConfig){
-            MarqueeManager.addMessage("Failed to load login resource config");
+            GameManager.showErrorLog("Failed to load login resource config");
         }
 
         const backgroundFrame = ResourceManager.getSpriteFrame(loginResourceConfig.backgroundFrameArray[0]);
         if(!backgroundFrame){
-            MarqueeManager.addMessage("Failed to load background frame");
+            GameManager.showErrorLog("Failed to load background frame");
         }
         this.background.spriteFrame = backgroundFrame;
 
@@ -53,6 +52,10 @@ export class LoginScene extends Component {
         GameManager.sendMessage(registerReq);
     }
 
+    /**
+     * 注册成功后的回调
+     * @param registerRespMessage 注册响应消息
+     */
     registerSuccess(registerRespMessage:RegisterRespMessage): void {
         this.operationSuccess(registerRespMessage.playerInfo);
     }
@@ -84,6 +87,10 @@ export class LoginScene extends Component {
         this.operationSuccess(loginRespMessage.playerInfo)
     }
 
+    /**
+     * 操作成功后的回调
+     * @param PlayerInfoMessage 玩家信息
+     */
     operationSuccess(PlayerInfoMessage: PlayerInfoMessage){
         GameManager.initPlayerData(PlayerInfoMessage);
 
@@ -92,7 +99,7 @@ export class LoginScene extends Component {
         this.userNameInputText.node.active = false;
         this.passwordInputText.node.active = false;
         
-        MarqueeManager.reset();
+        GameManager.beforeEnterScene();
         director["sceneParams"] = {
             targetScene: "mainScene",
         }
@@ -100,10 +107,9 @@ export class LoginScene extends Component {
     }
 
     destroy(): boolean {
-        const result = super.destroy();
         GlobalEventManager.getInstance().off(MessageType.LOGIN_RESP, this.afterLogin.bind(this));
         GlobalEventManager.getInstance().off(MessageType.REGISTER_RESP, this.registerSuccess.bind(this));
-        return result;
+        return super.destroy();
     }
 }
 

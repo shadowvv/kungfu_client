@@ -1,14 +1,9 @@
-import { _decorator, Component, Node } from 'cc';
-const { ccclass, property } = _decorator;
 
-@ccclass('Debug')
-export class Debug extends Component {
-    start() {
-
-    }
-
-    update(deltaTime: number) {
-        
-    }
+export class Debug {
+    /**
+     * 是否是调试模式
+     */
+    static isDebug: boolean = true;
 }
-
+
+

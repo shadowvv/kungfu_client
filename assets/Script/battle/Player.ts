@@ -1,5 +1,5 @@
 import { _decorator, Component, Prefab, instantiate, input, Input, EventMouse, Vec2, Vec3, Camera } from 'cc';
-import { Role } from '../battle/Role';
+import { Role } from './Role';
 import { ActionType, WeaponEnum } from '../GameEnumAndConstants';
 import { NetController } from '../NetController';
 const { ccclass, property } = _decorator;
