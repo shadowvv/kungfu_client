@@ -1,10 +1,10 @@
 import { _decorator, Button, Component, director, EditBox, Sprite } from 'cc';
-import { ResourceTarget, SceneEnum } from '../GameEnumAndConstants';
+import { ResourceTarget, SceneEnum } from '../main/GameEnumAndConstants';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
-import { ResourceManager } from '../ResourceManager';
-import { GameManager } from '../GameManager';
-import { GlobalEventManager } from '../GlobalEventManager';
-import { LoginReqMessage, LoginRespMessage, MessageType, RegisterReqMessage, RegisterRespMessage,PlayerInfoMessage } from '../Message';
+import { ResourceManager } from '../main/ResourceManager';
+import { GameManager } from '../main/GameManager';
+import { GlobalEventManager } from '../main/GlobalEventManager';
+import { LoginReqMessage, LoginRespMessage, MessageType, RegisterReqMessage, RegisterRespMessage,PlayerInfoMessage } from '../main/Message';
 const { ccclass, property } = _decorator;
 
 @ccclass('LoginScene')

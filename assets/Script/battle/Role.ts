@@ -2,7 +2,7 @@ import { _decorator, Component, instantiate, Node, Prefab, __private, Vec2, Labe
 import { MoveCircle } from './MoveCircle';
 import { AttackRange } from './AttackRange';
 import { Body } from './Body';
-import { getBaseNumber, WeaponEnum } from '../GameEnumAndConstants';
+import { getBaseNumber, WeaponEnum } from '../main/GameEnumAndConstants';
 import { WeaponConfig } from '../JsonObject/WeaponConfig';
 const { ccclass, property } = _decorator;
 

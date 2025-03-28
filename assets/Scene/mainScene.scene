@@ -57,7 +57,7 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 81
+      "__id__": 65
     },
     "_id": "0b567fcc-24bc-48ad-b015-24d780e6dcfc"
   },
@@ -107,7 +107,7 @@
     "_id": "45mL6MxGZIrI78p6uwlo7k"
   },
   {
-    "__type__": "f008dK51r9L/YjylE2oHsSx",
+    "__type__": "b287cDDNmJATY6t6kErK56x",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -123,7 +123,7 @@
     "weaponDescription": {
       "__id__": 40
     },
-    "_id": "415fm7w2FFp4wBCv8AVy1x"
+    "_id": "d3BeCBDoJAy7P8k8/widXu"
   },
   {
     "__type__": "cc.Sprite",
@@ -735,7 +735,7 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "f008dK51r9L/YjylE2oHsSx",
+    "_componentId": "b287cDDNmJATY6t6kErK56x",
     "handler": "chooseWeapon",
     "customEventData": "1"
   },
@@ -925,7 +925,7 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "f008dK51r9L/YjylE2oHsSx",
+    "_componentId": "b287cDDNmJATY6t6kErK56x",
     "handler": "chooseWeapon",
     "customEventData": "4"
   },
@@ -1115,7 +1115,7 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "f008dK51r9L/YjylE2oHsSx",
+    "_componentId": "b287cDDNmJATY6t6kErK56x",
     "handler": "chooseWeapon",
     "customEventData": "0"
   },
@@ -1305,7 +1305,7 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "f008dK51r9L/YjylE2oHsSx",
+    "_componentId": "b287cDDNmJATY6t6kErK56x",
     "handler": "chooseWeapon",
     "customEventData": "2"
   },
@@ -1495,7 +1495,7 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "f008dK51r9L/YjylE2oHsSx",
+    "_componentId": "b287cDDNmJATY6t6kErK56x",
     "handler": "chooseWeapon",
     "customEventData": "3"
   },
@@ -2089,7 +2089,7 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "f008dK51r9L/YjylE2oHsSx",
+    "_componentId": "b287cDDNmJATY6t6kErK56x",
     "handler": "onStartBattle",
     "customEventData": ""
   },
@@ -2192,30 +2192,6 @@
     "targetOverrides": [
       {
         "__id__": 63
-      },
-      {
-        "__id__": 65
-      },
-      {
-        "__id__": 67
-      },
-      {
-        "__id__": 69
-      },
-      {
-        "__id__": 71
-      },
-      {
-        "__id__": 73
-      },
-      {
-        "__id__": 75
-      },
-      {
-        "__id__": 77
-      },
-      {
-        "__id__": 79
       }
     ],
     "nestedPrefabInstanceRoots": [
@@ -2231,7 +2207,7 @@
     },
     "sourceInfo": null,
     "propertyPath": [
-      "nameLabel"
+      "playerShow"
     ],
     "target": {
       "__id__": 42
@@ -2243,210 +2219,34 @@
   {
     "__type__": "cc.TargetInfo",
     "localID": [
-      "006LkrDs5MzZiv+r0OlSfu"
-    ]
-  },
-  {
-    "__type__": "cc.TargetOverrideInfo",
-    "source": {
-      "__id__": 3
-    },
-    "sourceInfo": null,
-    "propertyPath": [
-      "winRateLabel"
-    ],
-    "target": {
-      "__id__": 42
-    },
-    "targetInfo": {
-      "__id__": 66
-    }
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
-      "f0hZLFJOtBB43YHfjHe9Aj"
-    ]
-  },
-  {
-    "__type__": "cc.TargetOverrideInfo",
-    "source": {
-      "__id__": 3
-    },
-    "sourceInfo": null,
-    "propertyPath": [
-      "favoriteWeaponLabel"
-    ],
-    "target": {
-      "__id__": 42
-    },
-    "targetInfo": {
-      "__id__": 68
-    }
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
-      "d64AgciZ5HrYYMAipWO4Ss"
-    ]
-  },
-  {
-    "__type__": "cc.TargetOverrideInfo",
-    "source": {
-      "__id__": 3
-    },
-    "sourceInfo": null,
-    "propertyPath": [
-      "bladeRateLabel"
-    ],
-    "target": {
-      "__id__": 42
-    },
-    "targetInfo": {
-      "__id__": 70
-    }
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
-      "aefwnNEOhIrqSuP+XFljd1"
-    ]
-  },
-  {
-    "__type__": "cc.TargetOverrideInfo",
-    "source": {
-      "__id__": 3
-    },
-    "sourceInfo": null,
-    "propertyPath": [
-      "spearRateLabel"
-    ],
-    "target": {
-      "__id__": 42
-    },
-    "targetInfo": {
-      "__id__": 72
-    }
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
-      "04LAPZqrxEw5A3FHdHYqe7"
-    ]
-  },
-  {
-    "__type__": "cc.TargetOverrideInfo",
-    "source": {
-      "__id__": 3
-    },
-    "sourceInfo": null,
-    "propertyPath": [
-      "swordRateLabel"
-    ],
-    "target": {
-      "__id__": 42
-    },
-    "targetInfo": {
-      "__id__": 74
-    }
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
-      "42Vb3NGYtHJrjl8k4av/E6"
-    ]
-  },
-  {
-    "__type__": "cc.TargetOverrideInfo",
-    "source": {
-      "__id__": 3
-    },
-    "sourceInfo": null,
-    "propertyPath": [
-      "bowRateLabel"
-    ],
-    "target": {
-      "__id__": 42
-    },
-    "targetInfo": {
-      "__id__": 76
-    }
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
-      "96eLzkTcFB5LttelmvYZ9j"
-    ]
-  },
-  {
-    "__type__": "cc.TargetOverrideInfo",
-    "source": {
-      "__id__": 3
-    },
-    "sourceInfo": null,
-    "propertyPath": [
-      "knifeRateLabel"
-    ],
-    "target": {
-      "__id__": 42
-    },
-    "targetInfo": {
-      "__id__": 78
-    }
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
-      "92269si1VD3rx5dS2dIByR"
-    ]
-  },
-  {
-    "__type__": "cc.TargetOverrideInfo",
-    "source": {
-      "__id__": 3
-    },
-    "sourceInfo": null,
-    "propertyPath": [
-      "playerShow"
-    ],
-    "target": {
-      "__id__": 42
-    },
-    "targetInfo": {
-      "__id__": 80
-    }
-  },
-  {
-    "__type__": "cc.TargetInfo",
-    "localID": [
       "ff18N95GlEpKQ6Wfofmp57"
     ]
   },
   {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 82
+      "__id__": 66
     },
     "shadows": {
-      "__id__": 83
+      "__id__": 67
     },
     "_skybox": {
-      "__id__": 84
+      "__id__": 68
     },
     "fog": {
-      "__id__": 85
+      "__id__": 69
     },
     "octree": {
-      "__id__": 86
+      "__id__": 70
     },
     "skin": {
-      "__id__": 87
+      "__id__": 71
     },
     "lightProbeInfo": {
-      "__id__": 88
+      "__id__": 72
     },
     "postSettings": {
-      "__id__": 89
+      "__id__": 73
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false

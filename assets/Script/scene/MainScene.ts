@@ -1,11 +1,11 @@
 import { _decorator, Component, director, Label, Node, Sprite } from 'cc';
-import { GameManager } from '../GameManager';
-import { ResourceManager } from '../ResourceManager';
+import { GameManager } from '../main/GameManager';
+import { ResourceManager } from '../main/ResourceManager';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
-import { ResourceTarget, SceneEnum, WeaponEnum } from '../GameEnumAndConstants';
-import { PlayerData } from '../PlayerData';
-import { ApplyBattleReqMessage, ApplyBattleRespMessage, MessageType } from '../Message';
-import { GlobalEventManager } from '../GlobalEventManager';
+import { ResourceTarget, SceneEnum, WeaponEnum } from '../main/GameEnumAndConstants';
+import { PlayerData } from '../main/PlayerData';
+import { ApplyBattleReqMessage, ApplyBattleRespMessage, MessageType } from '../main/Message';
+import { GlobalEventManager } from '../main/GlobalEventManager';
 import { PlayerShow } from '../PlayerShow';
 const { ccclass,property } = _decorator;
 

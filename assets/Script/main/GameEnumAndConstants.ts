@@ -1,5 +1,5 @@
 import { _decorator, Game } from 'cc';
-import { GameConfig } from './JsonObject/GameConfig';
+import { GameConfig } from '../JsonObject/GameConfig';
 
 export const ENVIRONMENT:string = 'dev';
 // export const ENVIRONMENT:string = 'prod';

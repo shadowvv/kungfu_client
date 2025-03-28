@@ -105,7 +105,7 @@
     "_id": "45mL6MxGZIrI78p6uwlo7k"
   },
   {
-    "__type__": "eac09w78Q9Hy4jSGUikPehs",
+    "__type__": "3d2e5warXVPjJuFfy0Qxcl4",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -129,7 +129,7 @@
     "passwordInputText": {
       "__id__": 36
     },
-    "_id": "3awEgCjwlCVpbSoVaXY5w2"
+    "_id": "59UOZJh3xKE6+qYDG5zy7+"
   },
   {
     "__type__": "cc.Sprite",
@@ -701,7 +701,7 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "eac09w78Q9Hy4jSGUikPehs",
+    "_componentId": "3d2e5warXVPjJuFfy0Qxcl4",
     "handler": "login",
     "customEventData": ""
   },
@@ -1857,7 +1857,7 @@
       "__id__": 2
     },
     "component": "",
-    "_componentId": "eac09w78Q9Hy4jSGUikPehs",
+    "_componentId": "3d2e5warXVPjJuFfy0Qxcl4",
     "handler": "register",
     "customEventData": ""
   },

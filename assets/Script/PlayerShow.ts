@@ -1,6 +1,6 @@
 import { _decorator, Component, Label, Node } from 'cc';
-import { GameManager } from './GameManager';
-import { PlayerData } from './PlayerData';
+import { GameManager } from './main/GameManager';
+import { PlayerData } from './main/PlayerData';
 const { ccclass, property } = _decorator;
 
 @ccclass('PlayerShow')

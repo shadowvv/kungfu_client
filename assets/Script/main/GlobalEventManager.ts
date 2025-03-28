@@ -1,6 +1,6 @@
 import { EventTarget } from 'cc';
-import { BaseMessage, MessageType } from './Message';
-import { MarqueeManager } from './MarqueeManager';
+import { BaseMessage, MessageType } from '../main/Message';
+import { MarqueeManager } from '../MarqueeManager';
 
 /**
  * 全局事件管理器

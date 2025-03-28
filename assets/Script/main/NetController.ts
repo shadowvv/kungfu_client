@@ -6,7 +6,7 @@ import {
     LoginRespMessage, MatchResultBroadMessage, MessageType, OperationReqMessage,
     OperationRespMessage
 } from './Message';
-import { ServerConfig } from './JsonObject/ServerConfig';
+import { ServerConfig } from '../JsonObject/ServerConfig';
 import { ENVIRONMENT } from './GameEnumAndConstants';
 import { GlobalEventManager } from './GlobalEventManager';
 import { GameManager } from './GameManager';

@@ -1,8 +1,8 @@
 import { _decorator, Component, Node, Prefab, instantiate, Button, RichText, EditBox} from 'cc';
 import { Player } from './Player';
-import { GameState, getWaitActionTick, getWaitCommandTick } from '../GameEnumAndConstants';
-import { NetController } from '../NetController';
-import { RoleMessage } from '../Message';
+import { GameState, getWaitActionTick, getWaitCommandTick } from '../main/GameEnumAndConstants';
+import { NetController } from '../main/NetController';
+import { RoleMessage } from '../main/Message';
 import { Role } from './Role';
 const { ccclass, property } = _decorator;
 
@@ -53,7 +53,7 @@ export class BattleManager extends Component {
     private targetNode: Node = null;
 
     start() {
-        this.netController = new NetController(this);
+        this.netController = new NetController();
         this.netController.connectWebSocket(false);
 
         this.setWeaponButtonsVisible(false);
@@ -87,7 +87,7 @@ export class BattleManager extends Component {
             return;
         }
         this.username = this.userNameInputText.string;
-        this.netController.login(this.username);
+        // this.netController.login(this.username);
     }
 
     /**
@@ -113,7 +113,7 @@ export class BattleManager extends Component {
             return;
         }
         if (this.netController) {
-            this.netController.applyBattle(Number.parseInt(weaponType));
+            // this.netController.applyBattle(Number.parseInt(weaponType));
         }
     }
 

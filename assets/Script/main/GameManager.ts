@@ -1,11 +1,11 @@
 import { _decorator, AudioClip, AudioSource, Component, director, Label, Node } from 'cc';
 import { NetController } from './NetController';
 import { PlayerData } from './PlayerData';
-import { MarqueeManager } from './MarqueeManager';
+import { MarqueeManager } from '../MarqueeManager';
 import { BaseMessage, MatchResultBroadMessage, MessageType, PlayerInfoMessage } from './Message';
 import { Debug } from './Debug';
-import { GlobalEventManager } from './GlobalEventManager';
-import { LoadingScene } from './loading/LoadingScene';
+import { GlobalEventManager } from '../main/GlobalEventManager';
+import { LoadingScene } from '../scene/LoadingScene';
 const { ccclass, property } = _decorator;
 
 /**

@@ -1,10 +1,10 @@
 import { _decorator, AudioClip, Component, director, JsonAsset, Label, ProgressBar, Sprite, SpriteAtlas, SpriteFrame } from 'cc';
-import { IResourceProgressUI, ResourceManager } from '../ResourceManager';
+import { IResourceProgressUI, ResourceManager } from '../main/ResourceManager';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
-import { ResourceTarget, SceneEnum } from '../GameEnumAndConstants';
-import { GameManager } from '../GameManager';
+import { ResourceTarget, SceneEnum } from '../main/GameEnumAndConstants';
+import { GameManager } from '../main/GameManager';
 import { ServerConfig } from '../JsonObject/ServerConfig';
-import { PlayerData } from '../PlayerData';
+import { PlayerData } from '../main/PlayerData';
 import { PlayerShow } from '../PlayerShow';
 const { ccclass,property } = _decorator;
 

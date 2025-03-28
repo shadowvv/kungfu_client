@@ -1,5 +1,5 @@
 import { _decorator, Component, Vec2, Graphics, Vec3 } from 'cc';
-import { getBaseNumber } from '../GameEnumAndConstants';
+import { getBaseNumber } from '../main/GameEnumAndConstants';
 import { ViewConfig } from '../JsonObject/ViewConfig';
 const { ccclass } = _decorator;
 
