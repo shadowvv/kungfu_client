@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Label, Node, Sprite } from 'cc';
+import { _decorator, Component, director, Label, Sprite } from 'cc';
 import { GameManager } from '../main/GameManager';
 import { ResourceManager } from '../main/ResourceManager';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
@@ -7,6 +7,9 @@ import { PlayerData } from '../main/PlayerData';
 import { ApplyBattleReqMessage, ApplyBattleRespMessage, MessageType } from '../main/Message';
 import { GlobalEventManager } from '../main/GlobalEventManager';
 import { PlayerShow } from '../PlayerShow';
+import { WeaponConfig } from '../JsonObject/WeaponConfig';
+import { ViewConfig } from '../JsonObject/ViewConfig';
+import { GameConfig } from '../JsonObject/GameConfig';
 const { ccclass,property } = _decorator;
 
 @ccclass('MainScene')
@@ -33,6 +36,15 @@ export class MainScene extends Component {
         }
         this.background.spriteFrame = backgroundFrame;
 
+        if(!WeaponConfig.getInstance().isLoaded()){
+            WeaponConfig.getInstance().loadConfig(ResourceManager.getJson(WeaponConfig.CONFIG_FILE));
+        }
+        if(!ViewConfig.getInstance().isLoaded()){
+            ViewConfig.getInstance().loadConfig(ResourceManager.getJson(ViewConfig.CONFIG_FILE));
+        }
+        if(!GameConfig.getInstance().isLoaded()){
+            GameConfig.getInstance().loadConfig(ResourceManager.getJson(GameConfig.CONFIG_FILE));
+        }
         this.showPlayerInfo();
         this.changeWeaponDescription();
 

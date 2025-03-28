@@ -1,8 +1,8 @@
-import { _decorator, AudioClip, AudioSource, Component, director, Label, Node } from 'cc';
+import { _decorator, AudioClip, AudioSource, Component, director } from 'cc';
 import { NetController } from './NetController';
 import { PlayerData } from './PlayerData';
 import { MarqueeManager } from '../MarqueeManager';
-import { BaseMessage, MatchResultBroadMessage, MessageType, PlayerInfoMessage } from './Message';
+import { BaseMessage, MatchResultBroadMessage, MessageType, PlayerInfoMessage, RoleMessage } from './Message';
 import { Debug } from './Debug';
 import { GlobalEventManager } from '../main/GlobalEventManager';
 import { LoadingScene } from '../scene/LoadingScene';
@@ -37,6 +37,7 @@ export class GameManager extends Component {
      * 仅在匹配成功后使用
      */
     private opponentData:PlayerData = null;
+    private roles: RoleMessage[] = [];
 
     onLoad() {
         if (GameManager.instance) {
@@ -57,6 +58,7 @@ export class GameManager extends Component {
                 this.opponentData.setPlayerName(role.userName);
             }
         }
+        this.roles = message.roles;
 
         if(director.getScene().name === "loadingScene"){
             const loadingScene:LoadingScene = director.getScene().getChildByName("Root").getComponent(LoadingScene);
@@ -106,6 +108,10 @@ export class GameManager extends Component {
      */
     static getOpponentData() : PlayerData {
         return this.instance.opponentData;
+    }
+
+    static getRoles(): RoleMessage[] {
+        return this.instance.roles;
     }
 
     /**

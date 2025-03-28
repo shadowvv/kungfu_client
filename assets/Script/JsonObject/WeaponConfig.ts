@@ -7,7 +7,7 @@ const { ccclass } = _decorator;
 @ccclass('WeaponConfig')
 export class WeaponConfig {
     private static instance: WeaponConfig = null;
-    private static readonly CONFIG_FILE: string = 'config/weaponConfig';
+    public static readonly CONFIG_FILE: string = 'config/weaponConfig';
     static getInstance(): WeaponConfig {
         if (WeaponConfig.instance == null) {
             WeaponConfig.instance = new WeaponConfig();
@@ -15,7 +15,8 @@ export class WeaponConfig {
         return WeaponConfig.instance;
     }
 
-    private weapons: WeaponData[] = [];
+    private resources: Map<string, WeaponData> = new Map();
+    private loaded:boolean = false;
 
     private constructor() {
     }
@@ -23,24 +24,20 @@ export class WeaponConfig {
     /**
      * 加载配置文件
      */
-    loadConfig(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            resources.load(WeaponConfig.CONFIG_FILE, JsonAsset, (err, jsonAsset) => {
-                if (err) {
-                    console.error('Failed to load config:', err);
-                    reject(err);
-                    return;
-                }
-                let json = jsonAsset.json;
-                for (let i = 0; i < json.length; i++) {
-                    let weapon = new WeaponData(json[i].id, json[i].type, json[i].moveRange, json[i].attack, json[i].innerRadius, json[i].outerRadius, json[i].startAngle, json[i].endAngle, json[i].hp);
-                    this.weapons[json[i].id] = weapon;
-                }
-                console.log("WeaponConfig loaded successfully.");
-                resolve();
-            });
-        });
+    loadConfig(jsonAsset: JsonAsset): void {
+        const json = jsonAsset.json;
 
+        if (!Array.isArray(json)) {
+            console.error("❌ loadConfig 失败，json 不是数组", json);
+            return;
+        }
+
+        for (let i = 0; i < json.length; i++) {
+            let weapon = new WeaponData(json[i].id, json[i].type, json[i].moveRange, json[i].attack, json[i].innerRadius, json[i].outerRadius, json[i].startAngle, json[i].endAngle, json[i].hp);
+            this.resources.set(json[i].id, weapon);
+        }
+
+        this.loaded = true;
     }
 
     /**
@@ -49,7 +46,11 @@ export class WeaponConfig {
      * @returns 获取武器数据
      */
     getWeaponById(id: number): WeaponData {
-        return this.weapons[id];
+        return this.resources.get(id.toString());
+    }
+
+    isLoaded() {
+        return this.loaded;
     }
 }
 

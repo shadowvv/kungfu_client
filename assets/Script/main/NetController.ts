@@ -1,6 +1,6 @@
-import { _decorator, director} from 'cc';
+import { _decorator } from 'cc';
 import {
-    ApplyBattleReqMessage, ApplyBattleRespMessage, BaseMessage, BattleResultBroadMessage,
+    ApplyBattleRespMessage, BaseMessage, BattleResultBroadMessage,
     BattleStartPushMessage,
     BattleStateBroadMessage, CancelMatchReqMessage, CancelMatchRespMessage, ErrorMessage, LoginReqMessage,
     LoginRespMessage, MatchResultBroadMessage, MessageType, OperationReqMessage,

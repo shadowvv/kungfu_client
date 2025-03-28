@@ -88,7 +88,7 @@
     "fileId": "00XwubuNRIk5K/VfklsRuX"
   },
   {
-    "__type__": "d8e46SAWgZLbKdZn8TThYve",
+    "__type__": "1cbb5Hs1j1Afoh/Ojolam40",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -103,12 +103,11 @@
       "__uuid__": "866487db-ae18-40e9-a29b-33f1e8460c83",
       "__expectedType__": "cc.Prefab"
     },
-    "weaponType": 4,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "45+ZkKcsZIfbgtCO7fSts9"
+    "fileId": "49ruWCNT5B1KLtfspWwSlJ"
   },
   {
     "__type__": "cc.PrefabInfo",

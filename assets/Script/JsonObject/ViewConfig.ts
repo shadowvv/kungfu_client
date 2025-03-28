@@ -7,7 +7,7 @@ const { ccclass } = _decorator;
 @ccclass('ViewConfig')
 export class ViewConfig {
     private static instance: ViewConfig = null;
-    private static readonly CONFIG_FILE: string = 'config/viewConfig';
+    public static readonly CONFIG_FILE: string = 'config/viewConfig';
     static getInstance(): ViewConfig {
         if (ViewConfig.instance == null) {
             ViewConfig.instance = new ViewConfig();
@@ -24,6 +24,7 @@ export class ViewConfig {
     private AttackStrockColor: string = null;
     private AttackFillColor: string = null;
     private AttackLineWidth: number = 0;
+    private loaded: boolean = false;
 
     private constructor() {
     }
@@ -31,28 +32,18 @@ export class ViewConfig {
     /**
      * 加载配置文件
      */
-    loadConfig(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            resources.load(ViewConfig.CONFIG_FILE, JsonAsset, (err, jsonAsset) => {
-                if (err) {
-                    console.error('Failed to load config:', err);
-                    reject(err);
-                    return;
-                }
-                let json = jsonAsset.json;
-                this.bodyStrockColor = json[0]["bodyStrockColor"];
-                this.bodyFillColor = json[0]["bodyFillColor"];
-                this.bodyLineWidth = json[0]["bodyLineWidth"];
-                this.MoveStrockColor = json[0]["MoveStrockColor"];
-                this.MoveFillColor = json[0]["MoveFillColor"];
-                this.MoveLineWidth = json[0]["MoveLineWidth"];
-                this.AttackStrockColor = json[0]["AttackStrockColor"];
-                this.AttackFillColor = json[0]["AttackFillColor"];
-                this.AttackLineWidth = json[0]["AttackLineWidth"];
-                console.log("ViewConfig loaded successfully.");
-                resolve();
-            });
-        });
+    loadConfig(jsonAsset: JsonAsset): void {
+        const json = jsonAsset.json;
+        this.bodyStrockColor = json[0]["bodyStrockColor"];
+        this.bodyFillColor = json[0]["bodyFillColor"];
+        this.bodyLineWidth = json[0]["bodyLineWidth"];
+        this.MoveStrockColor = json[0]["MoveStrockColor"];
+        this.MoveFillColor = json[0]["MoveFillColor"];
+        this.MoveLineWidth = json[0]["MoveLineWidth"];
+        this.AttackStrockColor = json[0]["AttackStrockColor"];
+        this.AttackFillColor = json[0]["AttackFillColor"];
+        this.AttackLineWidth = json[0]["AttackLineWidth"];
+        this.loaded = true;
     }
 
     /**
@@ -125,5 +116,9 @@ export class ViewConfig {
      */
     getAttackLineWidth(): number {
         return this.AttackLineWidth;
+    }
+
+    isLoaded() {
+        return this.loaded;
     }
 }

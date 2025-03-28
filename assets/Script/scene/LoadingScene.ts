@@ -6,6 +6,8 @@ import { GameManager } from '../main/GameManager';
 import { ServerConfig } from '../JsonObject/ServerConfig';
 import { PlayerData } from '../main/PlayerData';
 import { PlayerShow } from '../PlayerShow';
+import { GlobalEventManager } from '../main/GlobalEventManager';
+import { CancelMatchReqMessage, CancelMatchRespMessage, MessageType } from '../main/Message';
 const { ccclass,property } = _decorator;
 
 /**
@@ -29,6 +31,9 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     private opponentShow: PlayerShow = null;
     
     private isMatch:boolean = false; // 是否匹配
+    private matchOver:boolean = false; // 是否匹配结束
+    private loadOver:boolean = false; // 是否加载完成
+
     private nextScene: SceneEnum = null; // 目标场景
     private totalResources: number = 0; // 总资源数量
     private loadedResources: number = 0; // 已加载资源数量
@@ -48,6 +53,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
             this.opponentShow.node.active = false;
         }
 
+        GlobalEventManager.getInstance().on(MessageType.CANCEL_MATCH_RESP, this.onCancelMatch.bind(this));
     }
 
     async start() {
@@ -113,8 +119,12 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         //加载目标场景资源
         await this.loadResource(this.nextScene.toString() as ResourceTarget);
         
+        this.loadOver = true;
         //FIXME:测试代码
         if(this.isMatch){
+            if(this.matchOver){
+                this.enterNextScene();
+            }
             return;
         }
         
@@ -167,6 +177,19 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         this.opponentShow.node.active = true;
 
         this.opponentShow.showPlayerInfo(opponentData);
+        this.matchOver = true;
+        if(this.loadOver){
+            this.enterNextScene();
+        }
+    }
+
+    cancelMatch() {
+        const messaeg:CancelMatchReqMessage = new CancelMatchReqMessage();
+        GameManager.sendMessage(messaeg);
+    }
+
+    onCancelMatch(message:CancelMatchRespMessage) {
+
     }
 
     /**
@@ -175,6 +198,13 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     private enterNextScene() {
         GameManager.beforeEnterScene();
         director.loadScene(this.nextScene); // 加载完成后切换到主场景
+    }
+
+    destroy(): boolean {
+        GlobalEventManager.getInstance().off(MessageType.CANCEL_MATCH_RESP, this.onCancelMatch.bind(this));
+        this.selfShow.destroy();
+        this.opponentShow.destroy();
+        return super.destroy();
     }
 }
 

@@ -1,4 +1,4 @@
-import { _decorator, Game } from 'cc';
+import { _decorator } from 'cc';
 import { GameConfig } from '../JsonObject/GameConfig';
 
 export const ENVIRONMENT:string = 'dev';

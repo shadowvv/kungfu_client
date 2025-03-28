@@ -8,7 +8,7 @@ const { ccclass } = _decorator;
 export class GameConfig {
 
     private static instance: GameConfig = null;
-    private static readonly CONFIG_FILE: string = 'config/gameConfig';
+    public static readonly CONFIG_FILE: string = 'config/gameConfig';
     static getInstance(): GameConfig {
         if (GameConfig.instance == null) {
             GameConfig.instance = new GameConfig();
@@ -20,6 +20,7 @@ export class GameConfig {
     private waitCommandTick: number = 0;
     private waitActionTick: number = 0;
     private float2Int: number = 0;
+    private loaded:boolean = false;
 
     private constructor() {
     }
@@ -27,23 +28,13 @@ export class GameConfig {
     /**
      * 加载配置文件
      */
-    loadConfig(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            resources.load(GameConfig.CONFIG_FILE, JsonAsset, (err, jsonAsset) => {
-                if (err) {
-                    console.error('Failed to load config:', err);
-                    reject(err);
-                    return;
-                }
-                let json = jsonAsset.json;
-                this.baseNumber = json[0]["baseNumber"];
-                this.waitCommandTick = json[0]["waitCommandTick"];
-                this.waitActionTick = json[0]["waitActionTick"];
-                this.float2Int = json[0]["float2Int"];
-                console.log("GameConfig loaded successfully.");
-                resolve();
-            });
-        });
+    loadConfig(jsonAsset: JsonAsset): void {
+        const json = jsonAsset.json;
+        this.baseNumber = json[0]["baseNumber"];
+        this.waitCommandTick = json[0]["waitCommandTick"];
+        this.waitActionTick = json[0]["waitActionTick"];
+        this.float2Int = json[0]["float2Int"];
+        this.loaded = true;
     }
 
     /**
@@ -76,5 +67,9 @@ export class GameConfig {
      */
     getFloat2Int(): number {
         return this.float2Int;
+    }
+
+    isLoaded() {
+        return this.loaded;
     }
 }

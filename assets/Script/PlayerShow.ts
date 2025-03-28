@@ -1,5 +1,4 @@
-import { _decorator, Component, Label, Node } from 'cc';
-import { GameManager } from './main/GameManager';
+import { _decorator, Component, Label } from 'cc';
 import { PlayerData } from './main/PlayerData';
 const { ccclass, property } = _decorator;
 

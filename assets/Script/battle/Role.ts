@@ -138,6 +138,8 @@ export class Role extends Component {
      * @param hp 血量
      */
     action(x: number, y: number, faceAngle: number,hp:number) {
+        x = 0;
+        y = 0;
         const center = new Vec2(x, y);
         this.rotateAttack(faceAngle);
 
