@@ -2,17 +2,19 @@ import { _decorator, Component, Label, Node, director, tween, UITransform, Vec3,
 const { ccclass } = _decorator;
 
 /**
- * 走马灯管理器
+ * @description 走马灯管理器
+ * @author Drop
+ * @date 2025年3月28日
  */
 @ccclass('MarqueeManager')
 export class MarqueeManager extends Component {
     
-    /**
-     * 获取单例实例
-     */
     private static instance: MarqueeManager = null;
 
-    /** 添加一条走马灯消息 */
+    /** 
+     * @description 添加一条走马灯消息 
+     * @param message 消息内容
+     */
     static addMessage(message: string) {
         if (!MarqueeManager.instance) return;
         MarqueeManager.instance.messages.push(message);
@@ -20,7 +22,7 @@ export class MarqueeManager extends Component {
     }
 
     /**
-     * 重置走马灯节点
+     * @description 重置走马灯节点
      */
     static reset() {
         MarqueeManager.instance.resetNode();
@@ -71,6 +73,7 @@ export class MarqueeManager extends Component {
         this.checkCanvas();
     }
 
+    /** @description 检查 Canvas 是否存在以及走马灯节点是否丢失 */
     private checkCanvas() {
         const scene = director.getScene();
         if (!scene) {
@@ -115,6 +118,9 @@ export class MarqueeManager extends Component {
         }
     }
 
+    /**
+     * @description 创建走马灯 UI
+     */
     private createMarqueeUI() {
         // 创建走马灯节点
         this.marqueeNode = new Node("MarqueeNode");

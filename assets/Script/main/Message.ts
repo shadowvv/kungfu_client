@@ -34,7 +34,20 @@ export class BaseMessage {
                     Object.assign(role, item);
                     return role;
                 });
-            } else {
+            } else if (key === 'playerInfo') {
+                // 将普通对象转换为 Map
+                const playerInfo = new PlayerInfoMessage();
+                Object.assign(playerInfo, plainObject[key]);
+                playerInfo.weaponUseCountMap = new Map<number, number>();
+                playerInfo.weaponWinCountMap = new Map<number, number>();
+                for (const weaponType in plainObject[key].weaponUseCountMap) {
+                    playerInfo.weaponUseCountMap.set(Number(weaponType), plainObject[key].weaponUseCountMap[weaponType]);
+                }
+                for (const weaponType in plainObject[key].weaponWinCountMap) {
+                    playerInfo.weaponWinCountMap.set(Number(weaponType), plainObject[key].weaponWinCountMap[weaponType]);
+                }
+                template[key] = playerInfo;
+            } else  {
                 // 普通属性直接赋值
                 template[key] = plainObject[key];
             }
@@ -42,8 +55,6 @@ export class BaseMessage {
 
         return template;
     }
-
-
 }
 
 /**
@@ -323,30 +334,19 @@ export class RoleMessage {
     }
 }
 
-export class PlayerInfoMessage{
-
+export class PlayerInfoMessage {
     public playerId: number;
-    public playerName:string;//玩家昵称
-    public favouriteWeapon:number;//玩家喜欢的武器
-    public winRate:number;//玩家胜率
-
-    public bladeRate:number;//刀的胜率
-    public swordRate:number;//剑的胜率
-    public spearRate:number;//矛的胜率
-    public bowRate:number;//弓的胜率
-    public knifeRate:number;//刀的胜率
+    public userName: string;
+    public nickName: string;
+    public weaponUseCountMap: Map<number, number>;
+    public weaponWinCountMap: Map<number, number>;
 
     constructor() {
         this.playerId = 0;
-        this.playerName = "";
-        this.favouriteWeapon = 0;
-        this.winRate = 0;
-
-        this.bladeRate = 0;
-        this.swordRate = 0;
-        this.spearRate = 0;
-        this.bowRate = 0;
-        this.knifeRate = 0;
+        this.userName = "";
+        this.nickName = "";
+        this.weaponUseCountMap = new Map<number, number>();
+        this.weaponWinCountMap = new Map<number, number>();
     }
 }
 

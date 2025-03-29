@@ -6,8 +6,9 @@ const { ccclass } = _decorator;
  */
 @ccclass('ServerConfig')
 export class ServerConfig {
+    public static readonly CONFIG_FILE: string = 'config/serverConfig';
+    
     private static instance: ServerConfig = null;
-    private static readonly CONFIG_FILE: string = 'config/serverConfig';
     static getInstance(): ServerConfig {
         if (ServerConfig.instance == null) {
             ServerConfig.instance = new ServerConfig();

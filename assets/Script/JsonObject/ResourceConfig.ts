@@ -6,6 +6,8 @@ const { ccclass } = _decorator;
  */
 @ccclass('ResourceConfig')
 export class ResourceConfig {
+    public static readonly CONFIG_FILE: string = 'config/resourceConfig';
+
     private static instance: ResourceConfig = null;
 
     static getInstance(): ResourceConfig {

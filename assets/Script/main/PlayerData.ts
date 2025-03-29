@@ -10,35 +10,39 @@ export class PlayerData{
     private playerName:string;//玩家名称
     private favouriteWeapon:WeaponEnum;//玩家喜欢的武器
     private winRate:number;//玩家胜率
-
-    private bladeRate:number;//刀的胜率
-    private swordRate:number;//剑的胜率
-    private spearRate:number;//矛的胜率
-    private bowRate:number;//弓的胜率
-    private knifeRate:number;//刀的胜率
+    private weaponWinRate:Map<number, number>;//玩家使用的武器
 
     constructor(){
         this.playerId = 0;
         this.playerName = "test";
         this.favouriteWeapon = 0;
         this.winRate = 0;
-        this.bladeRate = 0;
-        this.swordRate = 0;
-        this.spearRate = 0;
-        this.bowRate = 0;
-        this.knifeRate = 0;
+        this.weaponWinRate = new Map<number, number>();
     }
 
-    init(PlayerInfoMessage: PlayerInfoMessage) {
-        this.playerId = PlayerInfoMessage.playerId;
-        this.playerName = PlayerInfoMessage.playerName;
-        this.favouriteWeapon = PlayerInfoMessage.favouriteWeapon;
-        this.winRate = PlayerInfoMessage.winRate;
-        this.bladeRate = PlayerInfoMessage.bladeRate;
-        this.swordRate = PlayerInfoMessage.swordRate;
-        this.spearRate = PlayerInfoMessage.spearRate;
-        this.bowRate = PlayerInfoMessage.bowRate;
-        this.knifeRate = PlayerInfoMessage.knifeRate;
+    init(playerInfoMessage: PlayerInfoMessage) {
+        this.playerId = playerInfoMessage.playerId;
+        this.playerName = playerInfoMessage.nickName;
+    
+        // 假设 favouriteWeapon 是使用次数最多的武器
+        let maxUseCount = 0;
+        // 计算总的使用次数
+        let totalUses = 0;
+        // 计算总的胜利次数
+        let totalWins = 0;
+        playerInfoMessage.weaponUseCountMap.forEach((weapon,count) => {
+            if (count > maxUseCount) {
+                maxUseCount = count;
+                this.favouriteWeapon = weapon;
+            }
+            totalUses += count;
+            let weaponWinCount = playerInfoMessage.weaponWinCountMap.get(weapon) ? playerInfoMessage.weaponWinCountMap.get(weapon) : 0;
+            totalWins += weaponWinCount;
+            this.weaponWinRate.set(weapon, weaponWinCount / count);
+        });
+    
+        // 计算胜率
+        this.winRate = totalUses > 0 ? totalWins / totalUses : 0;
     }
 
     setPlayerName(name:string){
@@ -73,44 +77,7 @@ export class PlayerData{
         return this.winRate;
     }
 
-    setBladeRate(rate:number){
-        this.bladeRate = rate;
+    getWeaponWinRate(weapon:number):number{
+        return this.weaponWinRate.get(weapon) ? this.weaponWinRate.get(weapon) : 0;
     }
-
-    getBladeRate():number{
-        return this.bladeRate;
-    }
-
-    setSwordRate(rate:number){
-        this.swordRate = rate;
-    }
-
-    getSwordRate():number{
-        return this.swordRate;
-    }
-
-    setSpearRate(rate:number){
-        this.spearRate = rate;
-    }
-
-    getSpearRate():number{
-        return this.spearRate;
-    }
-
-    setBowRate(rate:number){
-        this.bowRate = rate;
-    }
-
-    getBowRate():number{
-        return this.bowRate;
-    }
-
-    setKnifeRate(rate:number){
-        this.knifeRate = rate;
-    }
-
-    getKnifeRate():number{
-        return this.knifeRate;
-    }
-
 }

@@ -4,6 +4,8 @@
 
   /* Add your custom configuration here. */
   "compilerOptions": {
+    "lib": ["ES2017", "DOM"], // 确保包含 ES2017
+    "target": "ES6"    , // 设置目标版本为 ES6
     "strict": false
   }
 }

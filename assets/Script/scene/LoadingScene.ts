@@ -8,6 +8,9 @@ import { PlayerData } from '../main/PlayerData';
 import { PlayerShow } from '../PlayerShow';
 import { GlobalEventManager } from '../main/GlobalEventManager';
 import { CancelMatchReqMessage, CancelMatchRespMessage, MessageType } from '../main/Message';
+import { GameConfig } from '../JsonObject/GameConfig';
+import { ViewConfig } from '../JsonObject/ViewConfig';
+import { WeaponConfig } from '../JsonObject/WeaponConfig';
 const { ccclass,property } = _decorator;
 
 /**
@@ -25,6 +28,11 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     @property(Sprite)
     private background: Sprite = null; // 背景图
 
+    private nextScene: SceneEnum = null; // 目标场景
+    private totalResources: number = 0; // 总资源数量
+    private loadedResources: number = 0; // 已加载资源数量
+
+    //*************************************匹配相关的组件
     @property(PlayerShow)
     private selfShow: PlayerShow = null;
     @property(PlayerShow)
@@ -33,10 +41,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     private isMatch:boolean = false; // 是否匹配
     private matchOver:boolean = false; // 是否匹配结束
     private loadOver:boolean = false; // 是否加载完成
-
-    private nextScene: SceneEnum = null; // 目标场景
-    private totalResources: number = 0; // 总资源数量
-    private loadedResources: number = 0; // 已加载资源数量
+    //*************************************匹配相关的组件
 
     onLoad() {
         this.nextScene = SceneEnum.LoginScene;
@@ -130,6 +135,62 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         
         //进入目标加载场景
         this.enterNextScene();
+    }
+
+    /**
+     * 首次加载资源
+     * @returns 
+     */
+    private async firstTimeLoading() {
+        //加载全局资源
+        await this.loadResource(ResourceTarget.Global);
+        await this.loadResource(ResourceTarget.LoadingScene);
+        
+        const resourceConfig:JsonAsset = ResourceManager.getJson(ResourceConfig.CONFIG_FILE);
+        if(!resourceConfig){
+            GameManager.showErrorLog("Failed to load resource config");
+        }
+        ResourceConfig.getInstance().loadConfig(resourceConfig);
+
+        const gameConfig:JsonAsset = ResourceManager.getJson(GameConfig.CONFIG_FILE);
+        if(!gameConfig){
+            GameManager.showErrorLog("Failed to load game config");
+        }
+        GameConfig.getInstance().loadConfig(gameConfig);
+
+        const serverConfig:JsonAsset = ResourceManager.getJson(ServerConfig.CONFIG_FILE);
+        if(!serverConfig){
+            GameManager.showErrorLog("Failed to load server config");
+        }
+        ServerConfig.getInstance().loadConfig(serverConfig);
+
+        const viewConfig:JsonAsset = ResourceManager.getJson(ViewConfig.CONFIG_FILE);
+        if(!viewConfig){
+            GameManager.showErrorLog("Failed to load view config");
+        }
+        ViewConfig.getInstance().loadConfig(viewConfig);
+
+        const weaponConfig:JsonAsset = ResourceManager.getJson(WeaponConfig.CONFIG_FILE);
+        if(!weaponConfig){
+            GameManager.showErrorLog("Failed to load weapon config");
+        }
+        WeaponConfig.getInstance().loadConfig(weaponConfig);
+
+        // 加载BGM
+        const globalResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.Global);
+        if(!globalResourceConfig){
+            GameManager.showErrorLog("Failed to load global config");
+        }
+        if(!GameManager.isPlayingBgm()){
+            ResourceManager.loadMultiple(globalResourceConfig.audioArray,AudioClip).then((audioClips) => {
+                GameManager.playBgm(audioClips[0] as AudioClip);
+            });
+        }
+
+        // 创建网络连接
+        GameManager.createNetController();
+
+        LoadingScene.firstLoading = false;
     }
 
     /**
