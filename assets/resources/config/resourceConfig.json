@@ -11,7 +11,9 @@
         "jsonArray": [
             "config/resourceConfig",
             "config/serverConfig",
-            "config/gameConfig"
+            "config/gameConfig",
+            "config/weaponConfig",
+            "config/viewConfig"
         ],
         "backgroundFrameArray": []
     },
@@ -47,11 +49,10 @@
             "icon/swordIcon"
         ],
         "spiritAtlasArray": [],
-        "jsonArray": [
-            "config/weaponConfig",
-            "config/viewConfig"
-        ],
-        "backgroundFrameArray": []
+        "jsonArray": [],
+        "backgroundFrameArray": [
+            "BG/loadBG1"
+        ]
     },
     {
         "name": "battleScene",

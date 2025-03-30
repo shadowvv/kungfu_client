@@ -74,6 +74,7 @@ export class ResourceManager {
                         this.progressUI.updateProgress(); // 更新进度条
                     }
                     this.cache.set(path, asset);
+                    console.log(`Loaded resource:${path}`);
                     resolve(asset as T);
                 }
             });

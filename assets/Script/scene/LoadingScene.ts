@@ -82,11 +82,11 @@ export class LoadingScene extends Component implements IResourceProgressUI {
             }
             ResourceConfig.getInstance().loadConfig(resourceConfig);
         }
-
         const loadingResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.LoadingScene);
         if(!loadingResourceConfig){
             GameManager.showErrorLog("Failed to load loading resource config");
         }
+        await this.firstTimeLoading();
 
         // 加载背景图片
         const randomIndex = Math.floor(Math.random() * loadingResourceConfig.backgroundFrameArray.length);
@@ -97,30 +97,6 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         }
         this.background.spriteFrame = background;
         
-        // 加载BGM
-        const globalResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.Global);
-        if(!globalResourceConfig){
-            GameManager.showErrorLog("Failed to load global config");
-        }
-        if(!GameManager.isPlayingBgm()){
-            ResourceManager.loadMultiple(globalResourceConfig.audioArray,AudioClip).then((audioClips) => {
-                GameManager.playBgm(audioClips[0] as AudioClip);
-            });
-        }
-
-        // 创建网络连接
-        if(!ServerConfig.getInstance().isLoaded()){
-            await ResourceManager.load("config/serverConfig",JsonAsset);
-            ServerConfig.getInstance().loadConfig(ResourceManager.getJson("config/serverConfig") as JsonAsset);
-            GameManager.createNetController();
-        }
-
-        //加载全局资源
-        if(LoadingScene.firstLoading){
-            await this.loadResource(ResourceTarget.Global);
-            await this.loadResource(ResourceTarget.LoadingScene);
-            LoadingScene.firstLoading = false;
-        }
         //加载目标场景资源
         await this.loadResource(this.nextScene.toString() as ResourceTarget);
         
@@ -145,12 +121,6 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         //加载全局资源
         await this.loadResource(ResourceTarget.Global);
         await this.loadResource(ResourceTarget.LoadingScene);
-        
-        const resourceConfig:JsonAsset = ResourceManager.getJson(ResourceConfig.CONFIG_FILE);
-        if(!resourceConfig){
-            GameManager.showErrorLog("Failed to load resource config");
-        }
-        ResourceConfig.getInstance().loadConfig(resourceConfig);
 
         const gameConfig:JsonAsset = ResourceManager.getJson(GameConfig.CONFIG_FILE);
         if(!gameConfig){

@@ -29,7 +29,7 @@ export class LoginScene extends Component {
 
         const backgroundFrame = ResourceManager.getSpriteFrame(loginResourceConfig.backgroundFrameArray[0]);
         if(!backgroundFrame){
-            GameManager.showErrorLog("Failed to load background frame");
+            GameManager.showErrorLog("Failed to load background frame: "+loginResourceConfig.backgroundFrameArray[0]);
         }
         this.background.spriteFrame = backgroundFrame;
 
