@@ -11,6 +11,8 @@ export class PlayerData{
     private favouriteWeapon:WeaponEnum;//玩家喜欢的武器
     private winRate:number;//玩家胜率
     private weaponWinRate:Map<number, number>;//玩家使用的武器
+    private roleId: number = 0;//角色id
+    private weaponType: WeaponEnum = 0;//当前选择的武器
 
     constructor(){
         this.playerId = 0;
@@ -18,18 +20,24 @@ export class PlayerData{
         this.favouriteWeapon = 0;
         this.winRate = 0;
         this.weaponWinRate = new Map<number, number>();
+        this.roleId = 0;
+        this.weaponType = 0;
     }
 
+    /**
+     * 初始化玩家数据
+     * @param playerInfoMessage 玩家信息消息
+     */
     init(playerInfoMessage: PlayerInfoMessage) {
         this.playerId = playerInfoMessage.playerId;
         this.playerName = playerInfoMessage.nickName;
+        this.roleId = playerInfoMessage.roleId;
+        this.weaponType = playerInfoMessage.weaponType;
     
-        // 假设 favouriteWeapon 是使用次数最多的武器
         let maxUseCount = 0;
-        // 计算总的使用次数
         let totalUses = 0;
-        // 计算总的胜利次数
         let totalWins = 0;
+
         playerInfoMessage.weaponUseCountMap.forEach((weapon,count) => {
             if (count > maxUseCount) {
                 maxUseCount = count;
@@ -79,5 +87,21 @@ export class PlayerData{
 
     getWeaponWinRate(weapon:number):number{
         return this.weaponWinRate.get(weapon) ? this.weaponWinRate.get(weapon) : 0;
+    }
+
+    getWeaponType():number{
+        return this.weaponType;
+    }
+
+    setWeaponType(weaponType:number){
+        this.weaponType = weaponType;
+    }
+
+    getRoleId():number{
+        return this.roleId;
+    }
+
+    setRoleId(roleId:number){
+        this.roleId = roleId;
     }
 }

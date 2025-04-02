@@ -27,6 +27,8 @@ export class PlayerShow extends Component {
     private bowRateLabel:Label = null;
     @property(Label)
     private knifeRateLabel:Label = null;
+    @property(Label)
+    private currentWeaponLabel:Label = null;
 
     /**
      * @description 显示玩家信息
@@ -34,6 +36,7 @@ export class PlayerShow extends Component {
      */
     showPlayerInfo(playerData:PlayerData) {
         this.nameLabel.string = this.nameLabel.string + playerData.getPlayerName();
+        this.currentWeaponLabel.string = this.currentWeaponLabel.string + playerData.getWeaponType().toString();
         this.winRateLabel.string = this.winRateLabel.string + playerData.getWinRate().toString();
         this.favoriteWeaponLabel.string = this.favoriteWeaponLabel.string + playerData.getFavouriteWeapon().toString();
 
@@ -42,6 +45,7 @@ export class PlayerShow extends Component {
         this.knifeRateLabel.string = this.knifeRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.KNIFE).toString();
         this.spearRateLabel.string = this.spearRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.SPEAR).toString();
         this.swordRateLabel.string = this.swordRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.SWORD).toString();
+
     }
 }
 

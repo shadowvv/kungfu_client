@@ -1,9 +1,9 @@
 import { _decorator } from 'cc';
 import {
     ApplyBattleRespMessage, BaseMessage, BattleResultBroadMessage,
-    BattleStartPushMessage,
-    BattleStateBroadMessage, CancelMatchReqMessage, CancelMatchRespMessage, ErrorMessage, LoginReqMessage,
-    LoginRespMessage, MatchResultBroadMessage, MessageType, OperationReqMessage,
+    BattleStartBroadMessage,
+    BattleStateBroadMessage, CancelMatchRespMessage, ErrorMessage,
+    LoginRespMessage, MatchResultBroadMessage, MessageType,
     OperationRespMessage
 } from './Message';
 import { ServerConfig } from '../JsonObject/ServerConfig';
@@ -107,8 +107,8 @@ export class NetController {
             case MessageType.MATCH_RESULT_BROAD:
                 message = MatchResultBroadMessage.fromJSON<MatchResultBroadMessage>(event.data, MatchResultBroadMessage);
                 break;
-            case MessageType.BATTLE_START_PUSH:
-                message = BattleStartPushMessage.fromJSON<BattleStartPushMessage>(event.data, BattleStartPushMessage);
+            case MessageType.BATTLE_START_BROAD:
+                message = BattleStartBroadMessage.fromJSON<BattleStartBroadMessage>(event.data, BattleStartBroadMessage);
                 break;
             case MessageType.BATTLE_RESULT_BROAD:
                 message = BattleResultBroadMessage.fromJSON<BattleResultBroadMessage>(event.data, BattleResultBroadMessage);
@@ -140,85 +140,6 @@ export class NetController {
 
     closeWebSocket() {
         
-    }
-
-
-    /**
-     * 取消匹配
-     */
-    cancelMatch(): void {
-        const cancelMatchReq = new CancelMatchReqMessage();
-        this.sendMessage(cancelMatchReq);  // 发送取消匹配消息
-    }
-
-    /**
-     * 申请攻击操作
-     * @param roleId 角色 ID
-     * @param x 坐标 X
-     * @param y 坐标 Y
-     * @param lastAngle 角色面向的角度
-     */
-    applyAttack(roleId: number, x: number, y: number, lastAngle: number): void {
-        const operationReq = new OperationReqMessage();
-        operationReq.roleId = roleId;
-        operationReq.setPositionX(x);
-        operationReq.setPositionY(y);
-        operationReq.setFaceAngle(lastAngle);
-        this.sendMessage(operationReq);  // 发送操作请求
-    }
-
-    /**
-     * 处理取消匹配的响应
-     */
-    onMatchCancel(): void {
-        console.log("Match canceled.");  // 记录匹配取消
-        // TODO: 实现取消匹配的逻辑，例如通知玩家或更新 UI
-    }
-
-    /**
-     * 处理匹配结果广播
-     * @param matchResultBroadMessage 匹配结果广播消息对象
-     */
-    onMatchResultBroad(matchResultBroadMessage: MatchResultBroadMessage): void {
-        // 通知游戏管理器处理匹配结果，传递匹配到的角色信息
-        // this.gameManager.onMatchResultBroad(matchResultBroadMessage.roles);
-    }
-
-    /**
-     * 处理战斗开始的广播
-     */
-    onBattleStart(): void {
-        // 通知游戏管理器战斗开始，更新游戏状态
-        // this.gameManager.battleStart();
-    }
-
-    /**
-     * 处理战斗状态的变化
-     * @param battleState 当前战斗状态
-     */
-    onBattleStateChange(battleState: number): void {
-        // 通知游戏管理器战斗状态发生变化
-        // this.gameManager.onBattleStateChange(battleState);
-    }
-
-    /**
-     * 处理操作响应
-     * @param operationRespMessage 操作响应消息对象
-     */
-    onOperationResp(operationRespMessage: OperationRespMessage): void {
-        console.log("Operation response received.");  // 记录操作响应
-        // TODO: 实现操作响应的逻辑，例如更新角色位置或操作结果
-    }
-
-    /**
-     * 处理战斗结果广播
-     * @param battleResultBroadMessage 战斗结果广播消息对象
-     */
-    onBattleResultBroad(battleResultBroadMessage: BattleResultBroadMessage): void {
-        console.log("Battle result received:", battleResultBroadMessage);  // 记录战斗结果
-        // 通知游戏管理器处理战斗结果，传递参与战斗的角色信息
-        // this.gameManager.onBattleOperation(battleResultBroadMessage.roles);
-        // TODO: 处理战斗结果，例如更新 UI 或显示战斗胜负
     }
 
 }

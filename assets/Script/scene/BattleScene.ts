@@ -1,24 +1,21 @@
-import { _decorator, Component, instantiate, Prefab,Node, RichText, Game } from 'cc';
+import { _decorator, Component, instantiate, Prefab,Node, RichText } from 'cc';
 import { Player } from '../battle/Player';
 import { Role } from '../battle/Role';
-import { GameState, getWaitCommandTick, getWaitActionTick } from '../main/GameEnumAndConstants';
-import { RoleMessage } from '../main/Message';
+import { BattleState, getWaitCommandTick, getWaitActionTick } from '../main/GameEnumAndConstants';
+import { BattleResultBroadMessage, BattleStateBroadMessage, MessageType, OperationRespMessage, RoleMessage } from '../main/Message';
 import { GameManager } from '../main/GameManager';
+import { GlobalEventManager } from '../main/GlobalEventManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('BattleScene')
 export class BattleScene extends Component {
-// 玩家数据
-    private username: string;
-    private playerId: number;
-    private roleId: number;
 
     // 计时器
     private tick: number = 0;
     private lastTick: number = 0;
     private countDownTick: number = 0;
 
-    private gameState: GameState = GameState.WAIT_COMMAND;// 战斗相关
+    private gameState: BattleState = BattleState.PREPARE;// 战斗相关
 
     @property(RichText)
     private titleText: RichText = null; // UI 标题文本
@@ -34,22 +31,19 @@ export class BattleScene extends Component {
     private targetNode: Node = null;
 
     start() {
+        GlobalEventManager.getInstance().on(MessageType.OPERATION_RESP, this.onOperationResp.bind(this));
+        GlobalEventManager.getInstance().on(MessageType.BATTLE_RESULT_BROAD, this.onBattleResultBroad.bind(this));
+        GlobalEventManager.getInstance().on(MessageType.BATTLE_STATE_BROAD, this.onBattleStateChange.bind(this));
+
         const roles: RoleMessage[] = GameManager.getRoles();
         for (let i = 0; i < roles.length; i++) {
-            if (roles[i].roleId !== this.roleId) {
+            if (roles[i].roleId !== GameManager.getPlayerData().getRoleId()) {
                 this.createTargetPlayer(roles[i]);
             } else {
                 this.createSelfPlayer(roles[i]);
             }
         }
         this.battleStart();
-    }
-
-    /**
-     * 重连后的回调
-     */ 
-    afterReconnect() {
-        //TODO: 重连后的逻辑
     }
 
     /**
@@ -84,7 +78,7 @@ export class BattleScene extends Component {
 
             this.selfScript = this.selfNode.getComponent(Player);
             if (this.selfScript) {
-                this.selfScript.buildRole(roleData.userName, roleData.roleId, roleData.weaponType, true, null);
+                this.selfScript.buildRole(roleData.userName, roleData.roleId, roleData.weaponType, true);
                 this.selfScript.action(roleData.getPositionX(), roleData.getPositionY(), roleData.getFaceAngle(),roleData.getHp());
             } else {
                 console.error("Self Player component not found!");
@@ -96,7 +90,7 @@ export class BattleScene extends Component {
      * 战斗开始
      */
     battleStart(): void {
-        this.gameState = GameState.WAIT_COMMAND;
+        this.gameState = BattleState.WAIT_COMMAND;
         this.countDownTick = getWaitCommandTick();
 
         this.tick = performance.now();
@@ -109,7 +103,7 @@ export class BattleScene extends Component {
      */
     onBattleOperation(roles: RoleMessage[]): void {
         for (let i = 0; i < roles.length; i++) {
-            if (roles[i].roleId !== this.roleId) {
+            if (roles[i].roleId !== GameManager.getPlayerData().getRoleId()) {
                 this.targetScript.action(roles[i].getPositionX(), roles[i].getPositionY(), roles[i].getFaceAngle(),roles[i].getHp());
             } else {
                 this.selfScript.action(roles[i].getPositionX(), roles[i].getPositionY(), roles[i].getFaceAngle(),roles[i].getHp());
@@ -121,20 +115,20 @@ export class BattleScene extends Component {
      * 处理战斗状态变化
      * @param battleState 战斗状态
      */
-    onBattleStateChange(battleState: number): void {
-        this.gameState = battleState;
+    onBattleStateChange(battleState: BattleStateBroadMessage): void {
+        this.gameState = battleState.battleState;
         switch (this.gameState) {
-            case GameState.WAIT_COMMAND:
+            case BattleState.WAIT_COMMAND:
                 this.countDownTick = getWaitCommandTick();
                 this.selfScript.waitCommand();
                 break;
-            case GameState.WAIT_ACTION:
+            case BattleState.WAIT_ACTION:
                 this.countDownTick = getWaitActionTick();
                 this.selfScript.waitAction();
                 break;
-            case GameState.ACTION:
+            case BattleState.ACTION:
                 break;
-            case GameState.END:
+            case BattleState.END:
                 break;
         }
     }
@@ -145,6 +139,13 @@ export class BattleScene extends Component {
      */
     onBattleOver(winRoleId: number): void {
         // TODO: 实现战斗结束逻辑
+    }
+
+    /**
+     * 重连后的回调
+     */ 
+    afterReconnect() {
+        //TODO: 重连后的逻辑
     }
 
     update(deltaTime: number): void {
@@ -166,28 +167,38 @@ export class BattleScene extends Component {
      */
     private updateUI(): void {
         switch (this.gameState) {
-            case GameState.LOGIN:
-                this.titleText.string = "等待登录";
+            case BattleState.WAIT_COMMAND:
+                this.titleText.string = `等待${GameManager.getPlayerData().getPlayerName()}指令：${this.countDownTick} 秒`;
                 break;
-                case GameState.CHOOSE_WEAPON:
-                this.titleText.string = `${this.username}: 选择角色`;
+            case BattleState.WAIT_ACTION:
+                this.titleText.string = `等待${GameManager.getPlayerData().getPlayerName()}行动：${this.countDownTick} 秒`;
                 break;
-            case GameState.PREPARE:
-                this.titleText.string = `${this.username}: 正在匹配`;
+            case BattleState.ACTION:
+                this.titleText.string = `${GameManager.getPlayerData().getPlayerName()}:行动`;
                 break;
-            case GameState.WAIT_COMMAND:
-                this.titleText.string = `等待${this.username}指令：${this.countDownTick} 秒`;
-                break;
-            case GameState.WAIT_ACTION:
-                this.titleText.string = `等待${this.username}行动：${this.countDownTick} 秒`;
-                break;
-            case GameState.ACTION:
-                this.titleText.string = `${this.username}:行动`;
-                break;
-            case GameState.END:
+            case BattleState.END:
                 this.titleText.string = "战斗结束";
                 break;
         }
+    }
+    /**
+     * 处理操作响应
+     * @param operationRespMessage 操作响应消息对象
+     */
+    onOperationResp(operationRespMessage: OperationRespMessage): void {
+        console.log("Operation response received.");  // 记录操作响应
+        // TODO: 实现操作响应的逻辑，例如更新角色位置或操作结果
+    }
+
+    /**
+     * 处理战斗结果广播
+     * @param battleResultBroadMessage 战斗结果广播消息对象
+     */
+    onBattleResultBroad(battleResultBroadMessage: BattleResultBroadMessage): void {
+        console.log("Battle result received:", battleResultBroadMessage);  // 记录战斗结果
+        // 通知游戏管理器处理战斗结果，传递参与战斗的角色信息
+        this.onBattleOperation(battleResultBroadMessage.roles);
+        // TODO: 处理战斗结果，例如更新 UI 或显示战斗胜负
     }
 }
 

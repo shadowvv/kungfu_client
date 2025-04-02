@@ -47,22 +47,25 @@
       },
       {
         "__id__": 56
+      },
+      {
+        "__id__": 62
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 62
+        "__id__": 68
       },
       {
-        "__id__": 64
+        "__id__": 70
       },
       {
-        "__id__": 66
+        "__id__": 72
       }
     ],
     "_prefab": {
-      "__id__": 68
+      "__id__": 74
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -435,7 +438,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 59.98850553229666,
+      "width": 59.99230138029153,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -474,7 +477,7 @@
     "_string": "昵称：",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.125,
+    "_actualFontSize": 26.083333333333336,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -594,7 +597,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 59.98850553229666,
+      "width": 59.99230138029153,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -633,7 +636,7 @@
     "_string": "胜率：",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.125,
+    "_actualFontSize": 26.083333333333336,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -753,7 +756,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 99.98084255382776,
+      "width": 99.98716896715256,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -792,7 +795,7 @@
     "_string": "常用武器：",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.125,
+    "_actualFontSize": 26.083333333333336,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -912,7 +915,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 79.98467404306221,
+      "width": 79.98973517372204,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -951,7 +954,7 @@
     "_string": "刀胜率：",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.125,
+    "_actualFontSize": 26.083333333333336,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1071,7 +1074,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 79.98467404306221,
+      "width": 79.98973517372204,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1110,7 +1113,7 @@
     "_string": "弓胜率：",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.125,
+    "_actualFontSize": 26.083333333333336,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1230,7 +1233,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 79.98467404306221,
+      "width": 79.98973517372204,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1269,7 +1272,7 @@
     "_string": "剑胜率：",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.125,
+    "_actualFontSize": 26.083333333333336,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1389,7 +1392,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 99.98084255382776,
+      "width": 99.98716896715256,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1428,7 +1431,7 @@
     "_string": "长矛胜率：",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.125,
+    "_actualFontSize": 26.083333333333336,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1548,7 +1551,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 99.98084255382776,
+      "width": 99.98716896715256,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1587,7 +1590,7 @@
     "_string": "匕首胜率：",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.125,
+    "_actualFontSize": 26.083333333333336,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,
@@ -1644,6 +1647,165 @@
     "nestedPrefabInstanceRoots": null
   },
   {
+    "__type__": "cc.Node",
+    "_name": "currentWeapon",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 63
+      },
+      {
+        "__id__": 65
+      }
+    ],
+    "_prefab": {
+      "__id__": 67
+    },
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": 15.939,
+      "y": 221.863,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 33554432,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.UITransform",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 62
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 64
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 99.98716896715256,
+      "height": 50.4
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "14DWey7W1Jb6OG+SOTdJEu"
+  },
+  {
+    "__type__": "cc.Label",
+    "_name": "",
+    "_objFlags": 0,
+    "__editorExtras__": {},
+    "node": {
+      "__id__": 62
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 66
+    },
+    "_customMaterial": null,
+    "_srcBlendFactor": 2,
+    "_dstBlendFactor": 4,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 115,
+      "g": 228,
+      "b": 120,
+      "a": 255
+    },
+    "_string": "当前武器：",
+    "_horizontalAlign": 1,
+    "_verticalAlign": 1,
+    "_actualFontSize": 26.083333333333336,
+    "_fontSize": 20,
+    "_fontFamily": "Arial",
+    "_lineHeight": 40,
+    "_overflow": 0,
+    "_enableWrapText": true,
+    "_font": null,
+    "_isSystemFontUsed": true,
+    "_spacingX": 0,
+    "_isItalic": false,
+    "_isBold": false,
+    "_isUnderline": false,
+    "_underlineHeight": 2,
+    "_cacheMode": 0,
+    "_enableOutline": false,
+    "_outlineColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_outlineWidth": 2,
+    "_enableShadow": false,
+    "_shadowColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
+    },
+    "_shadowOffset": {
+      "__type__": "cc.Vec2",
+      "x": 2,
+      "y": 2
+    },
+    "_shadowBlur": 2,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "c7ky0ow5xAIoZ9xVr8F1I2"
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__id__": 0
+    },
+    "fileId": "23Onsr2q5CN7DxPzT7GlC0",
+    "instance": null,
+    "targetOverrides": null,
+    "nestedPrefabInstanceRoots": null
+  },
+  {
     "__type__": "cc.UITransform",
     "_name": "",
     "_objFlags": 0,
@@ -1653,7 +1815,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 63
+      "__id__": 69
     },
     "_contentSize": {
       "__type__": "cc.Size",
@@ -1681,7 +1843,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 65
+      "__id__": 71
     },
     "_customMaterial": null,
     "_srcBlendFactor": 2,
@@ -1727,7 +1889,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 67
+      "__id__": 73
     },
     "nameLabel": {
       "__id__": 17
@@ -1752,6 +1914,9 @@
     },
     "knifeRateLabel": {
       "__id__": 59
+    },
+    "currentWeaponLabel": {
+      "__id__": 65
     },
     "_id": ""
   },

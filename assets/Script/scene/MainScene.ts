@@ -1,4 +1,4 @@
-import { _decorator, Component, director, Label, Sprite } from 'cc';
+import { _decorator, Component, Label, Sprite } from 'cc';
 import { GameManager } from '../main/GameManager';
 import { ResourceManager } from '../main/ResourceManager';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
@@ -7,9 +7,6 @@ import { PlayerData } from '../main/PlayerData';
 import { ApplyBattleReqMessage, ApplyBattleRespMessage, MessageType } from '../main/Message';
 import { GlobalEventManager } from '../main/GlobalEventManager';
 import { PlayerShow } from '../PlayerShow';
-import { WeaponConfig } from '../JsonObject/WeaponConfig';
-import { ViewConfig } from '../JsonObject/ViewConfig';
-import { GameConfig } from '../JsonObject/GameConfig';
 const { ccclass,property } = _decorator;
 
 @ccclass('MainScene')
@@ -36,51 +33,51 @@ export class MainScene extends Component {
         }
         this.background.spriteFrame = backgroundFrame;
 
-        if(!WeaponConfig.getInstance().isLoaded()){
-            WeaponConfig.getInstance().loadConfig(ResourceManager.getJson(WeaponConfig.CONFIG_FILE));
-        }
-        if(!ViewConfig.getInstance().isLoaded()){
-            ViewConfig.getInstance().loadConfig(ResourceManager.getJson(ViewConfig.CONFIG_FILE));
-        }
-        if(!GameConfig.getInstance().isLoaded()){
-            GameConfig.getInstance().loadConfig(ResourceManager.getJson(GameConfig.CONFIG_FILE));
-        }
         this.showPlayerInfo();
         this.changeWeaponDescription();
 
         GlobalEventManager.getInstance().on(MessageType.APPLY_BATTLE_RESP, this.afterApplyBattle.bind(this));
     }
 
-    changeWeaponDescription() {
-        this.weaponDescription.string = `武器介绍 当前选择武器: ${WeaponEnum[this.choosedWeapon]}`;
+    private changeWeaponDescription() {
+        this.weaponDescription.string = `武器介绍 移动距离，攻击距离，攻击力 当前选择武器: ${WeaponEnum[this.choosedWeapon]}`;
     }
 
-    showPlayerInfo() {
+    private showPlayerInfo() {
         const playerData:PlayerData = GameManager.getPlayerData();
         this.playerShow.showPlayerInfo(playerData);
     }
 
+    /**
+    * @description 选择武器按钮点击事件
+    * @param event 事件对象
+    * @param customEventData 自定义事件数据
+    */
     chooseWeapon(event: Event, customEventData: string) {
         const index:number = parseInt(customEventData);
         this.choosedWeapon = index;
         this.changeWeaponDescription();
     }
 
-    onStartBattle() {
+    /**
+     * @description 申请对战按钮点击事件
+     * @param event 
+     * @param customEventData 
+     */
+    onStartBattle(event: Event, customEventData: string) {
         const message:ApplyBattleReqMessage = new ApplyBattleReqMessage();
         message.weaponType = this.choosedWeapon;
         GameManager.sendMessage(message);
     }
 
+    /**
+     * @description 申请对战响应事件
+     * @param message 申请对战响应消息
+     */
     afterApplyBattle(message:ApplyBattleRespMessage) {
-        GameManager.showErrorLog("匹配成功");
-
-        GameManager.beforeEnterScene();
-        director["sceneParams"] = {
-            targetScene: "battleScene",
-            isMatch: true,
-        }
-        director.loadScene(SceneEnum.LoadingScene);
+        GameManager.setRoleInfo(message.roleId,message.weaponType);
+        
+        GameManager.enterNextScene(SceneEnum.BattleScene,true);
     }
 
     destroy(): boolean {

@@ -1,4 +1,4 @@
-import { _decorator, Button, Component, director, EditBox, Sprite } from 'cc';
+import { _decorator, Button, Component, EditBox, Sprite } from 'cc';
 import { ResourceTarget, SceneEnum } from '../main/GameEnumAndConstants';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
 import { ResourceManager } from '../main/ResourceManager';
@@ -37,7 +37,13 @@ export class LoginScene extends Component {
         GlobalEventManager.getInstance().on(MessageType.REGISTER_RESP, this.registerSuccess.bind(this));
     }
 
-    register(): void {
+    /**
+     * 注册按钮点击事件
+     * @param event 
+     * @param customEventData 
+     * @returns 
+     */
+    register(event: Event, customEventData: string): void {
         if (this.userNameInputText.string === "") {
             GameManager.showErrorLog("用户名不能为空！");
             return;
@@ -63,7 +69,7 @@ export class LoginScene extends Component {
     /**
      * 处理登录按钮点击事件
      */
-    login(): void {
+    login(event: Event, customEventData: string): void {
         if (this.userNameInputText.string === "") {
             GameManager.showErrorLog("用户名不能为空！");
             return;
@@ -99,11 +105,7 @@ export class LoginScene extends Component {
         this.userNameInputText.node.active = false;
         this.passwordInputText.node.active = false;
         
-        GameManager.beforeEnterScene();
-        director["sceneParams"] = {
-            targetScene: "mainScene",
-        }
-        director.loadScene(SceneEnum.LoadingScene);
+        GameManager.enterNextScene(SceneEnum.MainScene);
     }
 
     destroy(): boolean {

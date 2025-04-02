@@ -1,7 +1,8 @@
 import { _decorator, Component, Prefab, instantiate, input, Input, EventMouse, Vec2, Vec3, Camera } from 'cc';
 import { Role } from './Role';
 import { ActionType, WeaponEnum } from '../main/GameEnumAndConstants';
-import { NetController } from '../main/NetController';
+import { GameManager } from '../main/GameManager';
+import { OperationReqMessage } from '../main/Message';
 const { ccclass, property } = _decorator;
 
 /**
@@ -14,7 +15,6 @@ export class Player extends Component {
     private role: Prefab = null; // 角色预制体
     private camera: Camera = null; // 相机
     private roleScript: Role = null; // 角色脚本
-    private netController: NetController = null; // 网络控制器
 
     private active: boolean = true; // 是否激活
     private center: Vec2 = new Vec2(0, 0);//世界坐标
@@ -30,8 +30,7 @@ export class Player extends Component {
      * @param active 是否激活
      * @param netController 网络控制器
      */
-    buildRole(userName: string, roleId: number, weaponType: WeaponEnum, active: boolean, netController: NetController): void {
-        this.netController = netController;
+    buildRole(userName: string, roleId: number, weaponType: WeaponEnum, active: boolean): void {
         this.active = active;
         this.actionType = ActionType.MOVE;
 
@@ -86,7 +85,7 @@ export class Player extends Component {
      * 等待操作
      */
     waitAction() {
-        this.actionType = ActionType.ACTION;
+        this.actionType = ActionType.IDLE;
 
         this.roleScript.updateBody(this.center);
         this.roleScript.updateAttack(this.center);
@@ -117,11 +116,27 @@ export class Player extends Component {
                 this.center.set(this.moveCenter.x, this.moveCenter.y);
                 this.roleScript.updatePosition(this.center);
             } else if (this.actionType == ActionType.ATTACK) {
-                this.actionType = ActionType.WAIT;
+                this.actionType = ActionType.IDLE;
                 this.active = false;
-                this.netController.applyAttack(this.roleScript.getRoleId(), this.center.x, this.center.y, this.currentAngle);
+                this.applyAttack(this.roleScript.getRoleId(), this.center.x, this.center.y, this.currentAngle);
             }
         }
+    }
+
+    /**
+     * 申请攻击操作
+     * @param roleId 角色 ID
+     * @param x 坐标 X
+     * @param y 坐标 Y
+     * @param lastAngle 角色面向的角度
+     */
+    applyAttack(roleId: number, x: number, y: number, lastAngle: number): void {
+        const operationReq = new OperationReqMessage();
+        operationReq.roleId = roleId;
+        operationReq.setPositionX(x);
+        operationReq.setPositionY(y);
+        operationReq.setFaceAngle(lastAngle);
+        GameManager.sendMessage(operationReq);  // 发送操作请求
     }
 
     onMouseMove(event: EventMouse): void {

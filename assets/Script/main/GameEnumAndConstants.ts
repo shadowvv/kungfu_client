@@ -35,36 +35,37 @@ export enum ResourceTarget {
  * 角色动作类型
  */
 export enum ActionType {
-    /**
-     * 移动
-     */
+    IDLE,
+    HELLO,
     MOVE,
-    /**
-     * 攻击
-     */
     ATTACK,
-    /**
-     * 等待
-     */
-    WAIT,
-    /**
-     * 行动
-     */
-    ACTION,
+    ASSISTANCE,
+    SPECIAL_ATTACK,
+    BLOCK,
+    BEHIT,
+    VICTORY,
+    DEAD,
+    REGRET,
+}
+
+/**
+ * 角色动作方向
+ */
+export enum ActionDirection {
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
+    LEFT_UP,
+    LEFT_DOWN,
+    RIGHT_UP,
+    RIGHT_DOWn
 }
 
 /**
  * 游戏状态
  */
-export enum GameState {
-    /**
-     * 登录
-     */
-    LOGIN,
-    /**
-     * 选择武器
-     */
-    CHOOSE_WEAPON,
+export enum BattleState {
     /**
      * 准备
      */
@@ -111,6 +112,17 @@ export enum WeaponEnum {
      * 弓
      */
     BOW,
+}
+
+/**
+ * 武器类型对应的资源
+ */
+export const weaponToResourceMap: { [key:number]:string } = {
+    [WeaponEnum.BLADE]: ResourceTarget.Blade,
+    [WeaponEnum.KNIFE]: ResourceTarget.Knife,
+    [WeaponEnum.SPEAR]: ResourceTarget.Spear,
+    [WeaponEnum.SWORD]: ResourceTarget.Sword,
+    [WeaponEnum.BOW]: ResourceTarget.Bow,
 }
 
 /**

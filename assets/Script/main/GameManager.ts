@@ -2,10 +2,11 @@ import { _decorator, AudioClip, AudioSource, Component, director } from 'cc';
 import { NetController } from './NetController';
 import { PlayerData } from './PlayerData';
 import { MarqueeManager } from '../MarqueeManager';
-import { BaseMessage, MatchResultBroadMessage, MessageType, PlayerInfoMessage, RoleMessage } from './Message';
+import { BaseMessage, BattleStartBroadMessage, MatchResultBroadMessage, MessageType, PlayerInfoMessage, RoleMessage } from './Message';
 import { Debug } from './Debug';
 import { GlobalEventManager } from '../main/GlobalEventManager';
 import { LoadingScene } from '../scene/LoadingScene';
+import { SceneEnum, WeaponEnum } from './GameEnumAndConstants';
 const { ccclass, property } = _decorator;
 
 /**
@@ -37,6 +38,9 @@ export class GameManager extends Component {
      * 仅在匹配成功后使用
      */
     private opponentData:PlayerData = null;
+    /**
+     * 角色战斗数据
+     */
     private roles: RoleMessage[] = [];
 
     onLoad() {
@@ -48,22 +52,41 @@ export class GameManager extends Component {
         director.addPersistRootNode(this.node);
 
         GlobalEventManager.getInstance().on(MessageType.MATCH_RESULT_BROAD, this.receiveMatchResult.bind(this));
+        GlobalEventManager.getInstance().on(MessageType.BATTLE_START_BROAD, this.battleStart.bind(this));
     }
 
-    receiveMatchResult(message: MatchResultBroadMessage) {
-        this.opponentData = new PlayerData();
-        for (let i = 0; i < message.roles.length; i++) {
-            const role = message.roles[i];
-            if (role.roleId != GameManager.getPlayerData().getPlayerId()) {
-                this.opponentData.setPlayerName(role.userName);
+    /**
+     * 战斗开始
+     */
+    battleStart(message: BattleStartBroadMessage) {
+        this.roles = message.roles;
+        if(director.getScene().name === "loadingScene"){
+            const loadingScene:LoadingScene = director.getScene().getChildByName("Root").getComponent(LoadingScene);
+            if (loadingScene) {
+                loadingScene.enterNextScene();
+            } else {
+                GameManager.showErrorLog("LoadingScene not found in the scene");
             }
         }
-        this.roles = message.roles;
+    }
+
+    /**
+     * 接收匹配结果
+     * @param message 匹配结果消息
+     */
+    async receiveMatchResult(message: MatchResultBroadMessage) {
+        this.opponentData = new PlayerData();
+        for (let i = 0; i < message.playerInfoList.length; i++) {
+            const playerInfo = message.playerInfoList[i];
+            if (playerInfo.playerId != GameManager.getPlayerData().getPlayerId()) {
+                this.opponentData.init(playerInfo);
+            }
+        }
 
         if(director.getScene().name === "loadingScene"){
             const loadingScene:LoadingScene = director.getScene().getChildByName("Root").getComponent(LoadingScene);
             if (loadingScene) {
-                loadingScene.showOpponentInfo(this.opponentData);
+                await loadingScene.showOpponentInfo(this.opponentData);
             } else {
                 GameManager.showErrorLog("LoadingScene not found in the scene");
             }
@@ -74,6 +97,7 @@ export class GameManager extends Component {
         GameManager.instance = null;
         this.netController.closeWebSocket();
         GlobalEventManager.getInstance().off(MessageType.MATCH_RESULT_BROAD, this.receiveMatchResult.bind(this));
+        GlobalEventManager.getInstance().off(MessageType.BATTLE_START_BROAD, this.battleStart.bind(this));
         return super.destroy();
     }
 
@@ -95,6 +119,34 @@ export class GameManager extends Component {
     }
 
     /**
+     * 设置玩家战斗角色数据
+     * @param roleId 角色 ID
+     * @param weaponType 武器
+     */
+    static setRoleInfo(roleId: number, weaponType: number) {
+        this.instance.playerData.setRoleId(roleId);
+        this.instance.playerData.setWeaponType(weaponType);
+    }
+
+    /**
+     * 
+     * @param audioClip 播放音频
+     */
+    static playBgm(audioClip: AudioClip) {
+        this.instance.audioSource.clip = audioClip;
+        this.instance.audioSource.loop = true;
+        this.instance.audioSource.play();
+    }
+
+    /**
+     * 
+     * @returns 是否正在播放音频
+     */
+    static isPlayingBgm() {
+        return this.instance.audioSource.playing;
+    }
+
+    /**
      * 
      * @returns 玩家数据
      */
@@ -110,26 +162,12 @@ export class GameManager extends Component {
         return this.instance.opponentData;
     }
 
+    /**
+     * 
+     * @returns 角色战斗数据
+     */
     static getRoles(): RoleMessage[] {
         return this.instance.roles;
-    }
-
-    /**
-     * 
-     * @param audioClip 播放音频
-     */
-    static playBgm(audioClip: AudioClip) {
-        // this.instance.audioSource.clip = audioClip;
-        // this.instance.audioSource.loop = true;
-        // this.instance.audioSource.play();
-    }
-
-    /**
-     * 
-     * @returns 是否正在播放音频
-     */
-    static isPlayingBgm() {
-        return this.instance.audioSource.playing;
     }
 
     /**
@@ -157,6 +195,20 @@ export class GameManager extends Component {
      */
     static beforeEnterScene() {
         MarqueeManager.reset();
+    }
+
+    /** 
+    * 进入下一个场景
+    * @param scene 下一个场景
+    * @param isMatch 是否匹配成功
+    */
+    static enterNextScene(scene:SceneEnum,isMatch:boolean = false) {
+        director["sceneParams"] = {
+            sourceScene: director.getScene().name,
+            targetScene: scene,
+            isMatch: isMatch,
+        }
+        director.loadScene(SceneEnum.LoadingScene);
     }
 }
 

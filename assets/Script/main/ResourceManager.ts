@@ -176,6 +176,15 @@ export class ResourceManager {
     }
 
     /**
+     * 获取缓存的SpriteAtlas资源
+     * @param path 资源路径
+     * @returns 
+     */
+    static getSpriteAtlas(path: string) {
+        return this.cache.get(path) as SpriteAtlas;
+    }
+
+    /**
      * 释放单个资源
      * @param path 资源路径
      */

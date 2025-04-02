@@ -1,13 +1,13 @@
-import { _decorator, AudioClip, Component, director, JsonAsset, Label, ProgressBar, Sprite, SpriteAtlas, SpriteFrame } from 'cc';
+import { _decorator, AudioClip, Button, Component, director, Game, JsonAsset, Label, ProgressBar, Sprite, SpriteAtlas, SpriteFrame } from 'cc';
 import { IResourceProgressUI, ResourceManager } from '../main/ResourceManager';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
-import { ResourceTarget, SceneEnum } from '../main/GameEnumAndConstants';
+import { ResourceTarget, SceneEnum, weaponToResourceMap } from '../main/GameEnumAndConstants';
 import { GameManager } from '../main/GameManager';
 import { ServerConfig } from '../JsonObject/ServerConfig';
 import { PlayerData } from '../main/PlayerData';
 import { PlayerShow } from '../PlayerShow';
 import { GlobalEventManager } from '../main/GlobalEventManager';
-import { CancelMatchReqMessage, CancelMatchRespMessage, MessageType } from '../main/Message';
+import { CancelMatchReqMessage, CancelMatchRespMessage, LoadBattleReadyReqMessage, MatchResultBroadMessage, MessageType, RoleMessage } from '../main/Message';
 import { GameConfig } from '../JsonObject/GameConfig';
 import { ViewConfig } from '../JsonObject/ViewConfig';
 import { WeaponConfig } from '../JsonObject/WeaponConfig';
@@ -37,10 +37,11 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     private selfShow: PlayerShow = null;
     @property(PlayerShow)
     private opponentShow: PlayerShow = null;
+    @property(Button)
+    private cancelMatchBtn:Button = null;
+
     
     private isMatch:boolean = false; // 是否匹配
-    private matchOver:boolean = false; // 是否匹配结束
-    private loadOver:boolean = false; // 是否加载完成
     //*************************************匹配相关的组件
 
     onLoad() {
@@ -53,25 +54,16 @@ export class LoadingScene extends Component implements IResourceProgressUI {
             this.nextScene = params.targetScene;
         }
 
+        this.selfShow.node.active = false;
+        this.opponentShow.node.active = false;
         if(!this.isMatch){
-            this.selfShow.node.active = false;
-            this.opponentShow.node.active = false;
+            this.cancelMatchBtn.node.active = false;
         }
 
         GlobalEventManager.getInstance().on(MessageType.CANCEL_MATCH_RESP, this.onCancelMatch.bind(this));
     }
 
     async start() {
-
-        // 是匹配，则显示玩家信息
-        if(this.isMatch){
-            this.showSelfInfo();
-            const opponentData = GameManager.getOpponentData();
-            if(opponentData){
-                this.showOpponentInfo(opponentData);
-            }
-        }
-
         ResourceManager.setProgressUI(this);
         // 加载资源配置文件
         if(!ResourceConfig.getInstance().isLoaded()){
@@ -86,8 +78,6 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         if(!loadingResourceConfig){
             GameManager.showErrorLog("Failed to load loading resource config");
         }
-        await this.firstTimeLoading();
-
         // 加载背景图片
         const randomIndex = Math.floor(Math.random() * loadingResourceConfig.backgroundFrameArray.length);
         let background = ResourceManager.getSpriteFrame(loadingResourceConfig.backgroundFrameArray[randomIndex]);
@@ -96,31 +86,34 @@ export class LoadingScene extends Component implements IResourceProgressUI {
             background = ResourceManager.getSpriteFrame(loadingResourceConfig.backgroundFrameArray[randomIndex]);
         }
         this.background.spriteFrame = background;
-        
-        //加载目标场景资源
-        await this.loadResource(this.nextScene.toString() as ResourceTarget);
-        
-        this.loadOver = true;
-        //FIXME:测试代码
-        if(this.isMatch){
-            if(this.matchOver){
-                this.enterNextScene();
-            }
-            return;
+        // 加载全局资源
+        if(LoadingScene.firstLoading){
+            await this.loadGlobalResource();
         }
-        
-        //进入目标加载场景
-        this.enterNextScene();
+        // 加载场景资源
+        await this.loadResource(ResourceTarget.LoadingScene);
+        // 加载目标场景资源
+        await this.loadResource(this.nextScene.toString() as ResourceTarget);
+        // 是匹配，则显示玩家信息
+        if(this.isMatch){
+            await this.showSelfInfo();
+            const opponentData = GameManager.getOpponentData();
+            if(opponentData){
+                await this.showOpponentInfo(opponentData);
+            }
+        }else{
+            //进入目标加载场景
+            this.enterNextScene();
+        }
     }
 
     /**
      * 首次加载资源
      * @returns 
      */
-    private async firstTimeLoading() {
+    private async loadGlobalResource() {
         //加载全局资源
         await this.loadResource(ResourceTarget.Global);
-        await this.loadResource(ResourceTarget.LoadingScene);
 
         const gameConfig:JsonAsset = ResourceManager.getJson(GameConfig.CONFIG_FILE);
         if(!gameConfig){
@@ -185,56 +178,77 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         await ResourceManager.loadMultiple(resourceConfig.backgroundFrameArray,SpriteFrame);
     }
 
+    /**
+     * 显示玩家信息
+     */
+    async showSelfInfo() {
+        this.selfShow.node.active = true;
+
+        const playerData:PlayerData = GameManager.getPlayerData();
+        this.selfShow.showPlayerInfo(playerData);
+
+        await this.loadResource(weaponToResourceMap[playerData.getWeaponType()] as ResourceTarget);
+    }
+
+    /**
+     * @description 显示对手信息
+     * @param opponentData 对手数据
+     */
+    async showOpponentInfo(opponentData: PlayerData) {
+        this.opponentShow.node.active = true;
+
+        this.opponentShow.showPlayerInfo(opponentData);
+        await this.loadResource(weaponToResourceMap[opponentData.getWeaponType()] as ResourceTarget);
+
+        GameManager.sendMessage(new LoadBattleReadyReqMessage());
+    }
+
+    /**
+     * 取消匹配
+     * @param event 
+     * @param customEventData 
+     */
+    cancelMatch(event: Event, customEventData: string) {
+        const messaeg:CancelMatchReqMessage = new CancelMatchReqMessage();
+        GameManager.sendMessage(messaeg);
+    }
+
+    /**
+     * 
+     * @param message 取消匹配响应消息
+     */
+    onCancelMatch(message:CancelMatchRespMessage) {
+        if(director["sceneParams"]){
+            const sourceScene = director["sourceScene"];
+            director.loadScene(sourceScene);
+        }else{
+            director.loadScene(SceneEnum.MainScene);
+        }
+    }
+
+    /**
+     * 进入下一个场景
+     */
+    enterNextScene() {
+        GameManager.beforeEnterScene();
+        director.loadScene(this.nextScene); 
+    }
+
+
     updateProgress(): void {
         this.loadedResources++;
         this.progressBar.progress = this.loadedResources / this.totalResources;
     }
 
     updateLoadingText(text: string): void {
-        this.scheduleOnce(() => {
+        if(this.loadingText){
             this.loadingText.string = text;
             this.loadingText.updateRenderData(true);
-        });
-    }
-
-    showSelfInfo() {
-        this.selfShow.node.active = true;
-
-        const playerData:PlayerData = GameManager.getPlayerData();
-        this.selfShow.showPlayerInfo(playerData);
-    }
-
-    showOpponentInfo(opponentData: PlayerData) {
-        this.opponentShow.node.active = true;
-
-        this.opponentShow.showPlayerInfo(opponentData);
-        this.matchOver = true;
-        if(this.loadOver){
-            this.enterNextScene();
         }
-    }
-
-    cancelMatch() {
-        const messaeg:CancelMatchReqMessage = new CancelMatchReqMessage();
-        GameManager.sendMessage(messaeg);
-    }
-
-    onCancelMatch(message:CancelMatchRespMessage) {
-
-    }
-
-    /**
-     * 进入下一个场景
-     */
-    private enterNextScene() {
-        GameManager.beforeEnterScene();
-        director.loadScene(this.nextScene); // 加载完成后切换到主场景
     }
 
     destroy(): boolean {
         GlobalEventManager.getInstance().off(MessageType.CANCEL_MATCH_RESP, this.onCancelMatch.bind(this));
-        this.selfShow.destroy();
-        this.opponentShow.destroy();
         return super.destroy();
     }
 }

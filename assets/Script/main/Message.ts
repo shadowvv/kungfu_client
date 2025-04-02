@@ -47,6 +47,21 @@ export class BaseMessage {
                     playerInfo.weaponWinCountMap.set(Number(weaponType), plainObject[key].weaponWinCountMap[weaponType]);
                 }
                 template[key] = playerInfo;
+            } else if(Array.isArray(plainObject[key]) && key === 'playerInfoList'){
+                // 将 playerInfoList 转换为 PlayerInfoMessage 数组
+                template[key] = plainObject[key].map((item: any) => {
+                    const playerInfo = new PlayerInfoMessage();
+                    Object.assign(playerInfo, item);
+                    playerInfo.weaponUseCountMap = new Map<number, number>();
+                    playerInfo.weaponWinCountMap = new Map<number, number>();
+                    for (const weaponType in item.weaponUseCountMap) {
+                        playerInfo.weaponUseCountMap.set(Number(weaponType), item.weaponUseCountMap[weaponType]);
+                    }
+                    for (const weaponType in item.weaponWinCountMap) {
+                        playerInfo.weaponWinCountMap.set(Number(weaponType), item.weaponWinCountMap[weaponType]);
+                    }
+                    return playerInfo;
+                });
             } else  {
                 // 普通属性直接赋值
                 template[key] = plainObject[key];
@@ -71,6 +86,9 @@ export class RegisterReqMessage extends BaseMessage {
     }
 }
 
+/**
+ * 注册响应消息
+ */
 export class RegisterRespMessage extends BaseMessage {
 
     public playerInfo:PlayerInfoMessage = null;
@@ -244,7 +262,7 @@ export class ErrorMessage extends BaseMessage {
  * 匹配结果广播消息
  */
 export class MatchResultBroadMessage extends BaseMessage {
-    public roles: RoleMessage[];
+    public playerInfoList: PlayerInfoMessage[];
 
     constructor() {
         super();
@@ -253,14 +271,34 @@ export class MatchResultBroadMessage extends BaseMessage {
 }
 
 /**
+ * 战斗加载准备请求消息
+ */
+export class LoadBattleReadyReqMessage extends BaseMessage {
+    constructor() {
+        super();
+        this.id = MessageType.BATTLE_LOAD_READY_REQ;
+    }
+}
+
+/**
+ * 战斗加载准备响应消息
+ */
+export class LoadBattleReadyRespMessage extends BaseMessage {
+    constructor() {
+        super();
+        this.id = MessageType.BATTLE_LOAD_READY_RESP;
+    }
+}
+
+/**
  * 战斗开始推送消息
  */
-export class BattleStartPushMessage extends BaseMessage {
-    public battleState: number;
+export class BattleStartBroadMessage extends BaseMessage {
+    public roles: RoleMessage[];
 
     constructor() {
         super();
-        this.id = MessageType.BATTLE_START_PUSH;
+        this.id = MessageType.BATTLE_START_BROAD;
     }
 }
 
@@ -334,12 +372,17 @@ export class RoleMessage {
     }
 }
 
+/**
+ * 玩家信息消息
+ */
 export class PlayerInfoMessage {
     public playerId: number;
     public userName: string;
     public nickName: string;
     public weaponUseCountMap: Map<number, number>;
     public weaponWinCountMap: Map<number, number>;
+    public roleId: number;
+    public weaponType: number;
 
     constructor() {
         this.playerId = 0;
@@ -347,6 +390,8 @@ export class PlayerInfoMessage {
         this.nickName = "";
         this.weaponUseCountMap = new Map<number, number>();
         this.weaponWinCountMap = new Map<number, number>();
+        this.roleId = 0;
+        this.weaponType = 0;
     }
 }
 
@@ -365,6 +410,8 @@ export enum MessageType {
     APPLY_BATTLE_RESP = 2002,
     CANCEL_MATCH_REQ = 3001,
     CANCEL_MATCH_RESP = 3002,
+    BATTLE_LOAD_READY_REQ = 5001,
+    BATTLE_LOAD_READY_RESP = 5002,
 
     OPERATION_REQ = 4001,
     OPERATION_RESP = 4002,
@@ -372,7 +419,7 @@ export enum MessageType {
     ERROR_MESSAGE = 9999,
 
     MATCH_RESULT_BROAD = 10001,
-    BATTLE_START_PUSH = 10002,
+    BATTLE_START_BROAD = 10002,
     BATTLE_RESULT_BROAD = 10003,
     BATTLE_STATE_BROAD = 10004,
 }

@@ -20,17 +20,14 @@ export class Role extends Component {
     private radius: number;
     private faceAngle: number = 0;
 
+    @property(Label)
     private title: Label = null;
-    private labelNode: Node = null;
-    @property(Prefab)
-    private body: Prefab = null;
-    private bodyScript: Body = null;
-    @property(Prefab)
-    private moveCircle: Prefab = null;
-    private circleScript: MoveCircle = null;
-    @property(Prefab)
-    private attackRange: Prefab = null;
-    private attackScript: AttackRange = null;
+    @property(Body)
+    private body: Body = null;
+    @property(MoveCircle)
+    private moveCircle: MoveCircle = null;
+    @property(AttackRange)
+    private attackRange: AttackRange = null;
 
     /**
      * 初始化角色
@@ -54,29 +51,7 @@ export class Role extends Component {
      * 构建角色图形
      */
     private buildGraph(): void {
-        const emptyNode = new Node("emptyNode");
-        this.node.addChild(emptyNode);
-
-        this.labelNode = new Node('LabelNode');
-        emptyNode.addChild(this.labelNode);
-        this.title = this.labelNode.addComponent(Label);
         this.title.fontSize = 24;
-
-        if (this.body) {
-            const bodyNode = instantiate(this.body);
-            emptyNode.addChild(bodyNode);
-            this.bodyScript = bodyNode.getComponent(Body);
-        }
-        if (this.moveCircle) {
-            const circleNode = instantiate(this.moveCircle);
-            emptyNode.addChild(circleNode);
-            this.circleScript = circleNode.getComponent(MoveCircle);
-        }
-        if (this.attackRange) {
-            const attackRangeNode = instantiate(this.attackRange);
-            emptyNode.addChild(attackRangeNode);
-            this.attackScript = attackRangeNode.getComponent(AttackRange);
-        }
         this.draw();
     }
 
@@ -85,17 +60,11 @@ export class Role extends Component {
      */
     private draw(): void {
         this.title.string = this.username + ": weaponType:" + WeaponEnum[this.weaponType] + " HP:" + this.hp;
-        this.labelNode.setPosition(-getBaseNumber(), this.radius + getBaseNumber(), 0);
-        if (this.bodyScript) {
-            this.bodyScript.draw();
-        }
-        if (this.circleScript) {
-            this.circleScript.draw(this.radius);
-        }
-        if (this.attackScript) {
-            const attackRangeParam = WeaponConfig.getInstance().getWeaponById(this.weaponType);
-            this.attackScript.draw(attackRangeParam.innerRadius * getBaseNumber(), attackRangeParam.outerRadius * getBaseNumber(), attackRangeParam.startAngle, attackRangeParam.endAngle, this.faceAngle);  // 设置半径和颜色
-        }
+        this.title.node.setPosition(-getBaseNumber(), this.radius + getBaseNumber(), 0);
+        this.moveCircle.draw(this.radius);
+
+        const attackRangeParam = WeaponConfig.getInstance().getWeaponById(this.weaponType);
+        this.attackRange.draw(attackRangeParam.innerRadius * getBaseNumber(), attackRangeParam.outerRadius * getBaseNumber(), attackRangeParam.startAngle, attackRangeParam.endAngle, this.faceAngle);  // 设置半径和颜色
     }
 
     /**
@@ -111,7 +80,7 @@ export class Role extends Component {
      * @param center 圆心坐标
      */
     updateBody(center: Vec2) {
-        this.bodyScript.updatePosition(center);
+        this.body.updatePosition(center);
     }
 
     /**
@@ -119,7 +88,7 @@ export class Role extends Component {
      * @param center 圆心坐标
      */
     updateAttack(center: Vec2) {
-        this.attackScript.updatePosition(center);
+        this.attackRange.updatePosition(center);
     }
 
     /**
@@ -127,7 +96,7 @@ export class Role extends Component {
      * @param lastAngle 旋转角度
      */
     rotateAttack(lastAngle: number) {
-        this.attackScript.rotate(lastAngle);
+        this.attackRange.rotate(lastAngle);
     }
 
     /**
@@ -138,8 +107,6 @@ export class Role extends Component {
      * @param hp 血量
      */
     action(x: number, y: number, faceAngle: number,hp:number) {
-        x = 0;
-        y = 0;
         const center = new Vec2(x, y);
         this.rotateAttack(faceAngle);
 
