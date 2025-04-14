@@ -2,7 +2,7 @@ import { WeaponEnum } from "./GameEnumAndConstants";
 import { PlayerInfoMessage } from "./Message";
 
 /**
- * 玩家数据
+ * @description 玩家数据
  */
 export class PlayerData{
 
@@ -25,7 +25,7 @@ export class PlayerData{
     }
 
     /**
-     * 初始化玩家数据
+     * @description 初始化玩家数据
      * @param playerInfoMessage 玩家信息消息
      */
     init(playerInfoMessage: PlayerInfoMessage) {

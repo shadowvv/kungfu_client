@@ -26,7 +26,7 @@ export class NetController {
     }
 
     /**
-     * 建立 WebSocket 连接
+     * @description 建立 WebSocket 连接
      */
     connectWebSocket(isReconnect:boolean): void {
         if (this.ws) {
@@ -64,7 +64,7 @@ export class NetController {
     }
 
     /**
-     * 发送消息到服务器
+     * @description 发送消息到服务器
      * @param message 消息对象
      */
     sendMessage(message: BaseMessage): void {
@@ -77,7 +77,7 @@ export class NetController {
     }
 
     /**
-     * 处理收到的服务器消息
+     * @description 处理收到的服务器消息
      * @param event WebSocket 消息事件
      */
     onMessage(event: MessageEvent): void {
@@ -130,7 +130,7 @@ export class NetController {
     }
 
     /**
-     * 处理错误消息
+     * @description 处理错误消息
      * @param errorMessage 错误消息对象
      */
     onError(errorMessage: ErrorMessage): void {

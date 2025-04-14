@@ -47,7 +47,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 创建对手角色
+     * @description 创建对手角色
      * @param roleData 角色数据
      */
     private createTargetPlayer(roleData: RoleMessage): void {
@@ -58,8 +58,7 @@ export class BattleScene extends Component {
             if(this.targetScript == null){
                 this.targetScript = this.targetNode.getComponent(Role);
                 if (this.targetScript) {
-                    this.targetScript.init(roleData.roleId, roleData.userName, roleData.weaponType);
-                    this.targetScript.action(roleData.getPositionX(), roleData.getPositionY(), roleData.getFaceAngle(),roleData.getHp());
+                    this.targetScript.init(roleData.roleId, roleData.userName, roleData.weaponType,roleData.getPositionX(), roleData.getPositionY(), roleData.getFaceAngle(),roleData.getHp());
                 } else {
                     console.error("Target Player component not found!");
                 }
@@ -68,7 +67,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 创建玩家角色
+     * @description 创建玩家角色
      * @param roleData 角色数据
      */
     private createSelfPlayer(roleData: RoleMessage): void {
@@ -78,8 +77,7 @@ export class BattleScene extends Component {
 
             this.selfScript = this.selfNode.getComponent(Player);
             if (this.selfScript) {
-                this.selfScript.buildRole(roleData.userName, roleData.roleId, roleData.weaponType, true);
-                this.selfScript.action(roleData.getPositionX(), roleData.getPositionY(), roleData.getFaceAngle(),roleData.getHp());
+                this.selfScript.init(roleData.userName, roleData.roleId, roleData.weaponType, roleData.getPositionX(), roleData.getPositionY(), roleData.getFaceAngle(),roleData.getHp());
             } else {
                 console.error("Self Player component not found!");
             }
@@ -87,7 +85,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 战斗开始
+     * @description 战斗开始
      */
     battleStart(): void {
         this.gameState = BattleState.WAIT_COMMAND;
@@ -98,7 +96,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 处理战斗操作广播
+     * @description 处理战斗操作广播
      * @param roles 角色信息数组
      */
     onBattleOperation(roles: RoleMessage[]): void {
@@ -112,7 +110,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 处理战斗状态变化
+     * @description 处理战斗状态变化
      * @param battleState 战斗状态
      */
     onBattleStateChange(battleState: BattleStateBroadMessage): void {
@@ -134,7 +132,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 处理战斗结束
+     * @description 处理战斗结束
      * @param winRoleId 胜利角色 ID
      */
     onBattleOver(winRoleId: number): void {
@@ -142,7 +140,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 重连后的回调
+     * @description 重连后的回调
      */ 
     afterReconnect() {
         //TODO: 重连后的逻辑
@@ -163,7 +161,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 更新 UI 标题
+     * @description 更新 UI 标题
      */
     private updateUI(): void {
         switch (this.gameState) {
@@ -182,7 +180,7 @@ export class BattleScene extends Component {
         }
     }
     /**
-     * 处理操作响应
+     * @description 处理操作响应
      * @param operationRespMessage 操作响应消息对象
      */
     onOperationResp(operationRespMessage: OperationRespMessage): void {
@@ -191,7 +189,7 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 处理战斗结果广播
+     * @description 处理战斗结果广播
      * @param battleResultBroadMessage 战斗结果广播消息对象
      */
     onBattleResultBroad(battleResultBroadMessage: BattleResultBroadMessage): void {

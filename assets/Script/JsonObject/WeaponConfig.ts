@@ -26,17 +26,52 @@ export class WeaponConfig {
      */
     loadConfig(jsonAsset: JsonAsset): void {
         const json = jsonAsset.json;
-
+    
         if (!Array.isArray(json)) {
-            console.error("❌ loadConfig 失败，json 不是数组", json);
+            console.error("loadConfig 失败,json 不是数组", json);
             return;
         }
-
+    
         for (let i = 0; i < json.length; i++) {
-            let weapon = new WeaponData(json[i].id, json[i].type, json[i].moveRange, json[i].attack, json[i].innerRadius, json[i].outerRadius, json[i].startAngle, json[i].endAngle, json[i].hp);
+            let weapon = new WeaponData(
+                parseInt(json[i].id), // 将字符串转换为数字
+                json[i].type,
+                parseFloat(json[i].moveRange), // 将字符串转换为浮点数
+                parseFloat(json[i].attack),
+                parseFloat(json[i].innerRadius),
+                parseFloat(json[i].outerRadius),
+                parseFloat(json[i].startAngle),
+                parseFloat(json[i].endAngle),
+                parseFloat(json[i].hp),
+                json[i].attackResource,
+                json[i].actionResource,
+                json[i].stateResource,
+                parseInt(json[i].attackStartIndex),
+                parseInt(json[i].attackCount),
+                parseInt(json[i].assistancStartIndex),
+                parseInt(json[i].assistanceCount),
+                parseInt(json[i].specialAttackStartIndex),
+                parseInt(json[i].specialAttackCount),
+                parseInt(json[i].helloStartIndex),
+                parseInt(json[i].helloCount),
+                parseInt(json[i].regretStartIndex),
+                parseInt(json[i].regretCount),
+                parseInt(json[i].standStartIndex),
+                parseInt(json[i].standCount),
+                parseInt(json[i].victoryStartIndex),
+                parseInt(json[i].victoryCount),
+                parseInt(json[i].beHitStartIndex),
+                parseInt(json[i].beHitCount),
+                parseInt(json[i].blockStartIndex),
+                parseInt(json[i].blockCount),
+                parseInt(json[i].deadStartIndex),
+                parseInt(json[i].deadCount),
+                parseInt(json[i].moveStartIndex),
+                parseInt(json[i].moveCount)
+            );
             this.resources.set(json[i].id, weapon);
         }
-
+    
         this.loaded = true;
     }
 
@@ -66,7 +101,6 @@ export class WeaponConfig {
  * @param endAngle 结束角度
  */
 export class WeaponData {
-
     public id: number;
     public type: string;
     public moveRange: number;
@@ -76,9 +110,48 @@ export class WeaponData {
     public startAngle: number;
     public endAngle: number;
     public hp: number;
+    public attackResource: string;
+    public actionResource: string;
+    public stateResource: string;
+    public clipStartIndex: number[];
+    public clipCount: number[];
 
-
-    constructor(id: number, type: string, moveRange: number, attack: number, innerRadius: number, outerRadius: number, startAngle: number, endAngle: number, hp: number) {
+    constructor(
+        id: number,
+        type: string,
+        moveRange: number,
+        attack: number,
+        innerRadius: number,
+        outerRadius: number,
+        startAngle: number,
+        endAngle: number,
+        hp: number,
+        attackResource: string,
+        actionResource: string,
+        stateResource: string,
+        attackStartIndex: number,
+        attackCount: number,
+        assistancStartIndex: number,
+        assistanceCount: number,
+        specialAttackStartIndex: number,
+        specialAttackCount: number,
+        helloStartIndex: number,
+        helloCount: number,
+        regretStartIndex: number,
+        regretCount: number,
+        standStartIndex: number,
+        standCount: number,
+        victoryStartIndex: number,
+        victoryCount: number,
+        beHitStartIndex: number,
+        beHitCount: number,
+        blockStartIndex: number,
+        blockCount: number,
+        deadStartIndex: number,
+        deadCount: number,
+        moveStartIndex: number,
+        moveCount: number
+    ) {
         this.id = id;
         this.type = type;
         this.moveRange = moveRange;
@@ -88,5 +161,10 @@ export class WeaponData {
         this.startAngle = startAngle;
         this.endAngle = endAngle;
         this.hp = hp;
+        this.attackResource = attackResource;
+        this.actionResource = actionResource;
+        this.stateResource = stateResource;
+        this.clipStartIndex = [attackStartIndex, assistancStartIndex, specialAttackStartIndex, helloStartIndex, regretStartIndex, standStartIndex, victoryStartIndex, beHitStartIndex, blockStartIndex, deadStartIndex, moveStartIndex];
+        this.clipCount = [attackCount, assistanceCount, specialAttackCount, helloCount, regretCount, standCount, victoryCount, beHitCount, blockCount, deadCount, moveCount];
     }
 }

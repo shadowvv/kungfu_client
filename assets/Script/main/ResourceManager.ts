@@ -33,7 +33,7 @@ export class ResourceManager {
     private static progressUI: IResourceProgressUI | null = null;
 
     /**
-     * 设置进度条 UI
+     * @description 设置进度条 UI
      * @param ui 进度条 UI 实例
      */
     static setProgressUI(ui: IResourceProgressUI) {
@@ -41,7 +41,7 @@ export class ResourceManager {
     }
 
     /**
-     * 加载单个资源
+     * @description 加载单个资源
      * @param path 资源路径 (resources 目录下)
      * @param type 资源类型 (JsonAsset, AudioClip, SpriteFrame, SpriteAtlas 等)
      * @returns Promise<T>
@@ -82,7 +82,7 @@ export class ResourceManager {
     }
 
     /**
-     * 批量加载多个资源
+     * @description 批量加载多个资源
      * @param paths 资源路径数组
      * @param type 资源类型
      * @returns Promise<T[]>
@@ -93,7 +93,7 @@ export class ResourceManager {
     }
 
     /**
-     * 批量加载某个文件夹下的所有资源
+     * @description 批量加载某个文件夹下的所有资源
      * @param dirPath 文件夹路径
      * @param type 资源类型
      * @returns Promise<T[]>
@@ -113,7 +113,7 @@ export class ResourceManager {
     }
 
     /**
-     * 加载 JSON 文件
+     * @description 加载 JSON 文件
      * @param path JSON 文件路径
      * @returns Promise<any>
      */
@@ -123,7 +123,7 @@ export class ResourceManager {
     }
 
     /**
-     * 加载音频
+     * @description 加载音频
      * @param path 音频文件路径
      * @returns Promise<AudioClip>
      */
@@ -132,7 +132,7 @@ export class ResourceManager {
     }
 
     /**
-     * 加载 SpriteFrame
+     * @description 加载 SpriteFrame
      * @param path 图片资源路径
      * @returns Promise<SpriteFrame>
      */
@@ -141,7 +141,7 @@ export class ResourceManager {
     }
 
     /**
-     * 加载 SpriteAtlas 图集
+     * @description 加载 SpriteAtlas 图集
      * @param path 图集资源路径
      * @returns Promise<SpriteAtlas>
      */
@@ -150,7 +150,7 @@ export class ResourceManager {
     }
 
     /**
-     * 获取缓存的json资源
+     * @description 获取缓存的json资源
      * @param path 资源路径
      */
     static getJson(path: string): JsonAsset {
@@ -158,7 +158,7 @@ export class ResourceManager {
     }
 
     /**
-     * 获取缓存的音频资源
+     * @description 获取缓存的音频资源
      * @param path 音频资源路径
      * @returns 
      */
@@ -167,7 +167,7 @@ export class ResourceManager {
     }
 
     /**
-     * 获取缓存的SpriteFrame资源
+     * @description 获取缓存的SpriteFrame资源
      * @param path 资源路径
      */
     static getSpriteFrame(path: string): SpriteFrame {
@@ -176,7 +176,7 @@ export class ResourceManager {
     }
 
     /**
-     * 获取缓存的SpriteAtlas资源
+     * @description 获取缓存的SpriteAtlas资源
      * @param path 资源路径
      * @returns 
      */
@@ -185,7 +185,7 @@ export class ResourceManager {
     }
 
     /**
-     * 释放单个资源
+     * @description 释放单个资源
      * @param path 资源路径
      */
     static release(path: string) {
@@ -196,7 +196,7 @@ export class ResourceManager {
     }
 
     /**
-     * 释放所有缓存资源
+     * @description 释放所有缓存资源
      */
     static releaseAll() {
         this.cache.forEach(asset => assetManager.releaseAsset(asset));

@@ -6,7 +6,7 @@ import { BaseMessage, BattleStartBroadMessage, MatchResultBroadMessage, MessageT
 import { Debug } from './Debug';
 import { GlobalEventManager } from '../main/GlobalEventManager';
 import { LoadingScene } from '../scene/LoadingScene';
-import { SceneEnum, WeaponEnum } from './GameEnumAndConstants';
+import { SceneEnum } from './GameEnumAndConstants';
 const { ccclass, property } = _decorator;
 
 /**
@@ -56,7 +56,7 @@ export class GameManager extends Component {
     }
 
     /**
-     * 战斗开始
+     * @description 战斗开始
      */
     battleStart(message: BattleStartBroadMessage) {
         this.roles = message.roles;
@@ -71,7 +71,7 @@ export class GameManager extends Component {
     }
 
     /**
-     * 接收匹配结果
+     * @description 接收匹配结果
      * @param message 匹配结果消息
      */
     async receiveMatchResult(message: MatchResultBroadMessage) {
@@ -93,16 +93,8 @@ export class GameManager extends Component {
         }
     }
 
-    destroy(): boolean {
-        GameManager.instance = null;
-        this.netController.closeWebSocket();
-        GlobalEventManager.getInstance().off(MessageType.MATCH_RESULT_BROAD, this.receiveMatchResult.bind(this));
-        GlobalEventManager.getInstance().off(MessageType.BATTLE_START_BROAD, this.battleStart.bind(this));
-        return super.destroy();
-    }
-
     /**
-     * 创建网络控制器
+     * @description 创建网络控制器
      */
     static createNetController() {
         this.instance.netController = new NetController();
@@ -119,7 +111,7 @@ export class GameManager extends Component {
     }
 
     /**
-     * 设置玩家战斗角色数据
+     * @description 设置玩家战斗角色数据
      * @param roleId 角色 ID
      * @param weaponType 武器
      */
@@ -179,7 +171,7 @@ export class GameManager extends Component {
     }
 
     /**
-     * 显示错误日志
+     * @description 显示错误日志
      * @param log 日志
      */
     static showErrorLog(log: string) {
@@ -191,14 +183,14 @@ export class GameManager extends Component {
     }
 
     /**
-     * 进入场景前的处理
+     * @description 进入场景前的处理
      */
     static beforeEnterScene() {
         MarqueeManager.reset();
     }
 
     /** 
-    * 进入下一个场景
+    * @description 进入下一个场景
     * @param scene 下一个场景
     * @param isMatch 是否匹配成功
     */
@@ -209,6 +201,14 @@ export class GameManager extends Component {
             isMatch: isMatch,
         }
         director.loadScene(SceneEnum.LoadingScene);
+    }
+
+    destroy(): boolean {
+        GameManager.instance = null;
+        this.netController.closeWebSocket();
+        GlobalEventManager.getInstance().off(MessageType.MATCH_RESULT_BROAD, this.receiveMatchResult.bind(this));
+        GlobalEventManager.getInstance().off(MessageType.BATTLE_START_BROAD, this.battleStart.bind(this));
+        return super.destroy();
     }
 }
 

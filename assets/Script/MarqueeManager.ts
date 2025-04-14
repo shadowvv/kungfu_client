@@ -144,13 +144,13 @@ export class MarqueeManager extends Component {
     }
 
     /**
-     * 重置走马灯节点位置到常驻节点
+     * @description 重置走马灯节点位置到常驻节点
      */
-    resetNode() {
+    private resetNode() {
         this.node.addChild(this.marqueeNode);
     }
 
-    /** 播放下一条消息 */
+    /** @description 播放下一条消息 */
     private playNext() {
         if (this.isPlaying || this.messages.length === 0) return;
 

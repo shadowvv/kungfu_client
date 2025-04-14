@@ -29,7 +29,7 @@ export class ServerConfig {
         const json = jsonAsset.json;
 
         if (!Array.isArray(json)) {
-            console.error("❌ loadConfig 失败，json 不是数组", json);
+            console.error("loadConfig 失败,json 不是数组", json);
             return;
         }
 

@@ -50,9 +50,7 @@
         ],
         "spiritAtlasArray": [],
         "jsonArray": [],
-        "backgroundFrameArray": [
-            "BG/loadBG1"
-        ]
+        "backgroundFrameArray": []
     },
     {
         "name": "battleScene",

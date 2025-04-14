@@ -24,7 +24,7 @@ export class GlobalEventManager {
     }
 
     /** 
-     * 发送事件 
+     * @description 发送事件 
      * @param message 消息
      */
     emit(message: BaseMessage): void {
@@ -36,7 +36,7 @@ export class GlobalEventManager {
     }
 
     /** 
-     * 监听事件 
+     * @description 监听事件 
      * @param messageType 消息类型
      * @param callback 回调函数
      */
@@ -45,7 +45,7 @@ export class GlobalEventManager {
     }
 
     /**
-     * 解绑事件
+     * @description 解绑事件
      * @param messageType 消息类型
      * @param callback 回调函数 
      */

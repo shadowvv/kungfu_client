@@ -1,4 +1,4 @@
-import { _decorator, AudioClip, Button, Component, director, Game, JsonAsset, Label, ProgressBar, Sprite, SpriteAtlas, SpriteFrame } from 'cc';
+import { _decorator, AudioClip, Button, Component, director, JsonAsset, Label, ProgressBar, Sprite, SpriteAtlas, SpriteFrame } from 'cc';
 import { IResourceProgressUI, ResourceManager } from '../main/ResourceManager';
 import { ResourceConfig, resourceData } from '../JsonObject/ResourceConfig';
 import { ResourceTarget, SceneEnum, weaponToResourceMap } from '../main/GameEnumAndConstants';
@@ -108,7 +108,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     }
 
     /**
-     * 首次加载资源
+     * @description 首次加载资源
      * @returns 
      */
     private async loadGlobalResource() {
@@ -157,10 +157,10 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     }
 
     /**
-     * 加载资源
+     * @description 加载资源
      * @param targetResource 加载目标资源
      */
-    async loadResource(targetResource: ResourceTarget){
+    private async loadResource(targetResource: ResourceTarget){
         const resourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(targetResource);
         if(!resourceConfig){
             GameManager.showErrorLog("Failed to load resource config");
@@ -179,7 +179,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     }
 
     /**
-     * 显示玩家信息
+     * @description 显示玩家信息
      */
     async showSelfInfo() {
         this.selfShow.node.active = true;
@@ -204,7 +204,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     }
 
     /**
-     * 取消匹配
+     * @description 取消匹配
      * @param event 
      * @param customEventData 
      */
@@ -227,7 +227,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     }
 
     /**
-     * 进入下一个场景
+     * @description 进入下一个场景
      */
     enterNextScene() {
         GameManager.beforeEnterScene();

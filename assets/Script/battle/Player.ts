@@ -23,15 +23,14 @@ export class Player extends Component {
     private actionType: ActionType; // 动作类型
 
     /**
-     * 创建角色
+     * @description 创建角色
      * @param userName 用户名
      * @param roleId 角色 ID
      * @param weaponType 武器类型
      * @param active 是否激活
      * @param netController 网络控制器
      */
-    buildRole(userName: string, roleId: number, weaponType: WeaponEnum, active: boolean): void {
-        this.active = active;
+    init(userName: string, roleId: number, weaponType: WeaponEnum,positionX: number,positionY: number,faceAngle: number,hp: number): void {
         this.actionType = ActionType.MOVE;
 
         if (this.role) {
@@ -40,7 +39,7 @@ export class Player extends Component {
 
             this.roleScript = roleNode.getComponent(Role); // 使用类名获取组件
             if (this.roleScript) {
-                this.roleScript.init(roleId, userName, weaponType);
+                this.roleScript.init(roleId, userName, weaponType,positionX,positionY,faceAngle,hp);
 
                 // 初始化圆心为角色初始位置
                 const initialPos = this.roleScript.node.worldPosition;
@@ -55,7 +54,7 @@ export class Player extends Component {
     }
 
     /**
-     * 触发角色动作
+     * @description 触发角色动作
      * @param x x 坐标
      * @param y y 坐标
      * @param faceAngle 面向角度
@@ -74,7 +73,7 @@ export class Player extends Component {
     }
 
     /**
-     * 等待命令
+     * @description 等待命令
      */
     waitCommand() {
         this.active = true;
@@ -82,10 +81,10 @@ export class Player extends Component {
     }
 
     /**
-     * 等待操作
+     * @description 等待操作
      */
     waitAction() {
-        this.actionType = ActionType.IDLE;
+        this.actionType = ActionType.MOVE;
 
         this.roleScript.updateBody(this.center);
         this.roleScript.updateAttack(this.center);
@@ -107,24 +106,24 @@ export class Player extends Component {
         if (!this.active) {
             return;
         }
-        if (event.getButton() == 0) {
-            if (this.actionType == ActionType.MOVE) {
-                this.actionType = ActionType.ATTACK;
-                this.roleScript.updateBody(this.center);
-                this.roleScript.updateAttack(this.center);
+        // if (event.getButton() == 0) {
+        //     if (this.actionType == ActionType.MOVE) {
+        //         this.actionType = ActionType.ATTACK;
+        //         this.roleScript.updateBody(this.center);
+        //         this.roleScript.updateAttack(this.center);
 
-                this.center.set(this.moveCenter.x, this.moveCenter.y);
-                this.roleScript.updatePosition(this.center);
-            } else if (this.actionType == ActionType.ATTACK) {
-                this.actionType = ActionType.IDLE;
-                this.active = false;
-                this.applyAttack(this.roleScript.getRoleId(), this.center.x, this.center.y, this.currentAngle);
-            }
-        }
+        //         this.center.set(this.moveCenter.x, this.moveCenter.y);
+        //         this.roleScript.updatePosition(this.center);
+        //     } else if (this.actionType == ActionType.ATTACK) {
+        //         this.actionType = ActionType.STAND;
+        //         this.active = false;
+        //         this.applyAttack(this.roleScript.getRoleId(), this.center.x, this.center.y, this.currentAngle);
+        //     }
+        // }
     }
 
     /**
-     * 申请攻击操作
+     * @description 申请攻击操作
      * @param roleId 角色 ID
      * @param x 坐标 X
      * @param y 坐标 Y
@@ -147,28 +146,33 @@ export class Player extends Component {
         const mousePos = new Vec2(event.getLocationX(), event.getLocationY());
         const screenPos = new Vec3(mousePos.x, mousePos.y, 0);
 
-        if (this.actionType == ActionType.ATTACK) {
-            const dir = mousePos.subtract(this.center);
-            let angle = Math.atan2(dir.y, dir.x) * (180 / Math.PI);
-            this.currentAngle = (angle + 360) % 360;
-            this.roleScript.rotateAttack(this.currentAngle);
-        } else if (this.actionType == ActionType.MOVE) {
-            let WorldPos = new Vec3();
-            this.camera?.screenToWorld(screenPos, WorldPos);
+        const dir = mousePos.subtract(this.center);
+        let angle = Math.atan2(dir.y, dir.x) * (180 / Math.PI);
+        this.currentAngle = (angle + 360) % 360;
+        this.roleScript.rotateAttack(this.currentAngle);
 
-            let finalWorldPos = WorldPos.toVec2();
-            const dir = finalWorldPos.clone().subtract(this.center);
-            const distance = dir.length();
-            if (distance > this.roleScript.getMoveRange()) {
-                dir.normalize().multiplyScalar(this.roleScript.getMoveRange());
-                finalWorldPos = dir.add(this.center);
-            }
+        // if (this.actionType == ActionType.ATTACK) {
+        //     const dir = mousePos.subtract(this.center);
+        //     let angle = Math.atan2(dir.y, dir.x) * (180 / Math.PI);
+        //     this.currentAngle = (angle + 360) % 360;
+        //     this.roleScript.rotateAttack(this.currentAngle);
+        // } else if (this.actionType == ActionType.MOVE) {
+        //     let WorldPos = new Vec3();
+        //     this.camera?.screenToWorld(screenPos, WorldPos);
 
-            this.moveCenter.set(finalWorldPos.x, finalWorldPos.y);
+        //     let finalWorldPos = WorldPos.toVec2();
+        //     const dir = finalWorldPos.clone().subtract(this.center);
+        //     const distance = dir.length();
+        //     if (distance > this.roleScript.getMoveRange()) {
+        //         dir.normalize().multiplyScalar(this.roleScript.getMoveRange());
+        //         finalWorldPos = dir.add(this.center);
+        //     }
 
-            this.roleScript.updateBody(this.moveCenter);
-            this.roleScript.updateAttack(this.moveCenter);
-        }
+        //     this.moveCenter.set(finalWorldPos.x, finalWorldPos.y);
+
+        //     this.roleScript.updateBody(this.moveCenter);
+        //     this.roleScript.updateAttack(this.moveCenter);
+        // }
     }
 
 }

@@ -30,12 +30,12 @@ export class Role extends Component {
     private attackRange: AttackRange = null;
 
     /**
-     * 初始化角色
+     * @description 初始化角色
      * @param roleId 角色 ID
      * @param username 用户名 
      * @param weapon 武器类型 
      */
-    init(roleId: number, username: string, weapon: WeaponEnum): void {
+    init(roleId: number, username: string, weapon: WeaponEnum,positionX: number,positionY: number,faceAngle: number,hp: number): void {
         this.roleId = roleId;
         this.username = username;
         this.weaponType = weapon;
@@ -45,10 +45,11 @@ export class Role extends Component {
         this.radius = WeaponConfig.getInstance().getWeaponById(weapon).moveRange * getBaseNumber();
 
         this.buildGraph();
+        this.action(positionX, positionY, faceAngle, hp);
     }
 
     /**
-     * 构建角色图形
+     * @description 构建角色图形
      */
     private buildGraph(): void {
         this.title.fontSize = 24;
@@ -56,19 +57,19 @@ export class Role extends Component {
     }
 
     /**
-     * 绘制角色图形
+     * @description 绘制角色图形
      */
     private draw(): void {
         this.title.string = this.username + ": weaponType:" + WeaponEnum[this.weaponType] + " HP:" + this.hp;
         this.title.node.setPosition(-getBaseNumber(), this.radius + getBaseNumber(), 0);
         this.moveCircle.draw(this.radius);
-
+        this.body.initBody(this.weaponType); 
         const attackRangeParam = WeaponConfig.getInstance().getWeaponById(this.weaponType);
         this.attackRange.draw(attackRangeParam.innerRadius * getBaseNumber(), attackRangeParam.outerRadius * getBaseNumber(), attackRangeParam.startAngle, attackRangeParam.endAngle, this.faceAngle);  // 设置半径和颜色
     }
 
     /**
-     * 更新角色世界坐标位置
+     * @description 更新角色世界坐标位置
      * @param center 圆心坐标
      */
     updatePosition(center: Vec2) {
@@ -76,7 +77,7 @@ export class Role extends Component {
     }
 
     /**
-     * 更新角色移动范围
+     * @description 更新角色移动范围
      * @param center 圆心坐标
      */
     updateBody(center: Vec2) {
@@ -84,7 +85,7 @@ export class Role extends Component {
     }
 
     /**
-     * 更新角色攻击范围
+     * @description 更新角色攻击范围
      * @param center 圆心坐标
      */
     updateAttack(center: Vec2) {
@@ -92,15 +93,16 @@ export class Role extends Component {
     }
 
     /**
-     * 旋转角色攻击范围
+     * @description 旋转角色攻击范围
      * @param lastAngle 旋转角度
      */
     rotateAttack(lastAngle: number) {
         this.attackRange.rotate(lastAngle);
+        this.body.rotate(lastAngle);
     }
 
     /**
-     * 触发角色动作
+     * @description 触发角色动作
      * @param x x 坐标
      * @param y y 坐标
      * @param faceAngle 面向角度

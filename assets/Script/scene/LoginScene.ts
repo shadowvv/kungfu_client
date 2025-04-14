@@ -38,7 +38,7 @@ export class LoginScene extends Component {
     }
 
     /**
-     * 注册按钮点击事件
+     * @description 注册按钮点击事件
      * @param event 
      * @param customEventData 
      * @returns 
@@ -59,7 +59,7 @@ export class LoginScene extends Component {
     }
 
     /**
-     * 注册成功后的回调
+     * @description 注册成功后的回调
      * @param registerRespMessage 注册响应消息
      */
     registerSuccess(registerRespMessage:RegisterRespMessage): void {
@@ -67,7 +67,7 @@ export class LoginScene extends Component {
     }
 
     /**
-     * 处理登录按钮点击事件
+     * @description 处理登录按钮点击事件
      */
     login(event: Event, customEventData: string): void {
         if (this.userNameInputText.string === "") {
@@ -86,7 +86,7 @@ export class LoginScene extends Component {
     }
 
     /**
-     * 登录成功后的回调
+     * @description 登录成功后的回调
      * @param playerId 玩家 ID
      */
     afterLogin(loginRespMessage: LoginRespMessage): void {
@@ -94,7 +94,7 @@ export class LoginScene extends Component {
     }
 
     /**
-     * 操作成功后的回调
+     * @description 操作成功后的回调
      * @param PlayerInfoMessage 玩家信息
      */
     operationSuccess(PlayerInfoMessage: PlayerInfoMessage){

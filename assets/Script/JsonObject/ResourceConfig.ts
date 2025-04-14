@@ -17,7 +17,6 @@ export class ResourceConfig {
         return ResourceConfig.instance;
     }
 
-    // ❌ 修正：用 Map<string, resourceData> 代替数组
     private resources: Map<string, resourceData> = new Map();
     private loaded: boolean = false;
 
@@ -30,7 +29,7 @@ export class ResourceConfig {
         const json = jsonAsset.json;
 
         if (!Array.isArray(json)) {
-            console.error("❌ loadConfig 失败，json 不是数组", json);
+            console.error("loadConfig 失败,json 不是数组", json);
             return;
         }
 
@@ -38,7 +37,7 @@ export class ResourceConfig {
             const data = json[i];
 
             if (!data.name) {
-                console.warn(`⚠️ 资源缺少 name，跳过`, data);
+                console.warn(`资源缺少 name,跳过`, data);
                 continue;
             }
 
@@ -51,7 +50,6 @@ export class ResourceConfig {
                 Array.isArray(data.backgroundFrameArray) ? data.backgroundFrameArray : [],
             );
 
-            // ✅ 修正：用 Map 存储
             this.resources.set(data.name, resource);
         }
         this.loaded = true;

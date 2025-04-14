@@ -40,12 +40,11 @@ export class PlayerShow extends Component {
         this.winRateLabel.string = this.winRateLabel.string + playerData.getWinRate().toString();
         this.favoriteWeaponLabel.string = this.favoriteWeaponLabel.string + playerData.getFavouriteWeapon().toString();
 
-        this.bladeRateLabel.string = this.bladeRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.BLADE).toString();
-        this.bowRateLabel.string = this.bowRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.BOW).toString();
-        this.knifeRateLabel.string = this.knifeRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.KNIFE).toString();
-        this.spearRateLabel.string = this.spearRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.SPEAR).toString();
-        this.swordRateLabel.string = this.swordRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.SWORD).toString();
-
+        this.bladeRateLabel.string = this.bladeRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.blade).toString();
+        this.bowRateLabel.string = this.bowRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.bow).toString();
+        this.knifeRateLabel.string = this.knifeRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.knife).toString();
+        this.spearRateLabel.string = this.spearRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.spear).toString();
+        this.swordRateLabel.string = this.swordRateLabel.string + playerData.getWeaponWinRate(WeaponEnum.sword).toString();
     }
 }
 

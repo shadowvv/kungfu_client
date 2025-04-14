@@ -20,7 +20,7 @@ export class MainScene extends Component {
 
     @property(Label)
     private weaponDescription:Label = null;
-    private choosedWeapon:WeaponEnum = WeaponEnum.SWORD;
+    private choosedWeapon:WeaponEnum = WeaponEnum.sword;
 
     start() {
         const mainResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.MainScene);
@@ -76,7 +76,6 @@ export class MainScene extends Component {
      */
     afterApplyBattle(message:ApplyBattleRespMessage) {
         GameManager.setRoleInfo(message.roleId,message.weaponType);
-        
         GameManager.enterNextScene(SceneEnum.BattleScene,true);
     }
 

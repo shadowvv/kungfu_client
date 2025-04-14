@@ -35,31 +35,33 @@ export enum ResourceTarget {
  * 角色动作类型
  */
 export enum ActionType {
-    IDLE,
-    HELLO,
-    MOVE,
     ATTACK,
     ASSISTANCE,
     SPECIAL_ATTACK,
-    BLOCK,
-    BEHIT,
-    VICTORY,
-    DEAD,
+
+    HELLO,
     REGRET,
+    STAND,
+    VICTORY,
+    
+    BEHIT,
+    BLOCK,
+    DEAD,
+    MOVE,
 }
 
 /**
  * 角色动作方向
  */
 export enum ActionDirection {
-    LEFT,
     RIGHT,
-    UP,
+    RIGHT_DOWN,
     DOWN,
-    LEFT_UP,
     LEFT_DOWN,
+    LEFT,
+    LEFT_UP,
+    UP,
     RIGHT_UP,
-    RIGHT_DOWn
 }
 
 /**
@@ -95,34 +97,34 @@ export enum WeaponEnum {
     /**
      * 剑
      */
-    BLADE,
+    blade,
     /**
      * 刀
      */
-    SWORD,
+    sword,
     /**
      * 长矛
      */
-    SPEAR,
+    spear,
     /**
      * 匕首
      */
-    KNIFE,
+    knife,
     /**
      * 弓
      */
-    BOW,
+    bow,
 }
 
 /**
  * 武器类型对应的资源
  */
 export const weaponToResourceMap: { [key:number]:string } = {
-    [WeaponEnum.BLADE]: ResourceTarget.Blade,
-    [WeaponEnum.KNIFE]: ResourceTarget.Knife,
-    [WeaponEnum.SPEAR]: ResourceTarget.Spear,
-    [WeaponEnum.SWORD]: ResourceTarget.Sword,
-    [WeaponEnum.BOW]: ResourceTarget.Bow,
+    [WeaponEnum.blade]: ResourceTarget.Blade,
+    [WeaponEnum.knife]: ResourceTarget.Knife,
+    [WeaponEnum.spear]: ResourceTarget.Spear,
+    [WeaponEnum.sword]: ResourceTarget.Sword,
+    [WeaponEnum.bow]: ResourceTarget.Bow,
 }
 
 /**
