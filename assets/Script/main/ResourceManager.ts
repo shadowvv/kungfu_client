@@ -67,15 +67,18 @@ export class ResourceManager {
         return new Promise<T>((resolve, reject) => {
             resources.load(path, type, (err, asset) => {
                 if (err) {
-                    GameManager.showErrorLog(`Failed to load resource:${path}`);
+                    GameManager.errorLog(`Failed to load resource:${path}`);
                     reject(err);
                 } else {
                     if (this.progressUI) {
                         this.progressUI.updateProgress(); // 更新进度条
                     }
                     this.cache.set(path, asset);
-                    console.log(`Loaded resource:${path}`);
+                    GameManager.infoLog(`Loaded resource:${path}`);
                     resolve(asset as T);
+                    if (this.progressUI) {
+                        this.progressUI.updateLoadingText(``); // 清空加载资源名称
+                    }
                 }
             });
         });
@@ -102,7 +105,7 @@ export class ResourceManager {
         return new Promise<T[]>((resolve, reject) => {
             resources.loadDir(dirPath, type, (err, assets) => {
                 if (err) {
-                    GameManager.showErrorLog(`Failed to load directory:${dirPath}`);
+                    GameManager.errorLog(`Failed to load directory:${dirPath}`);
                     reject(err);
                 } else {
                     assets.forEach(asset => this.cache.set(asset.name, asset));

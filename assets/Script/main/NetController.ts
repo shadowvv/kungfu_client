@@ -42,7 +42,7 @@ export class NetController {
 
         // 连接成功时触发
         this.ws.onopen = () => {
-            console.log("WebSocket connected.");
+            GameManager.infoLog("WebSocket connected.");
             if(isReconnect){
                 // this.gameManager.afterReconnect();
             }
@@ -53,12 +53,12 @@ export class NetController {
 
         // 发生错误时触发
         this.ws.onerror = (event) => {
-            GameManager.showErrorLog(`WebSocket encountered an error:${event}`);
+            GameManager.errorLog(`WebSocket encountered an error:${event}`);
         };
 
         // 连接关闭时触发，3 秒后重连
         this.ws.onclose = (event) => {
-            GameManager.showErrorLog(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
+            GameManager.errorLog(`WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
             setTimeout(() => this.connectWebSocket(true), serverData.reconnectInterval);
         };
     }
@@ -72,7 +72,7 @@ export class NetController {
             const json = message.message2JSON();
             this.ws.send(json);
         } else {
-            GameManager.showErrorLog("WebSocket is not open.");
+            GameManager.errorLog("WebSocket is not open.");
         }
     }
 
@@ -85,7 +85,7 @@ export class NetController {
         try {
             jsonData = JSON.parse(event.data);
         } catch (e) {
-            GameManager.showErrorLog(`Failed to parse message:${e}`);
+            GameManager.errorLog(`Failed to parse message:${e}`);
             return;
         }
 
@@ -120,7 +120,7 @@ export class NetController {
                 message = ErrorMessage.fromJSON<ErrorMessage>(event.data, ErrorMessage);
                 break;
             default:
-                GameManager.showErrorLog(`Unknown message received:${event.data}`);
+                GameManager.errorLog(`Unknown message received:${event.data}`);
                 break;
         }
 
@@ -135,7 +135,7 @@ export class NetController {
      */
     onError(errorMessage: ErrorMessage): void {
         // TODO: 处理错误，例如通知用户或重试
-        GameManager.showErrorLog(`Request ${errorMessage.reqId} failed with error code: ${errorMessage.errorCode}`);
+        GameManager.errorLog(`Request ${errorMessage.reqId} failed with error code: ${errorMessage.errorCode}`);
     }
 
     closeWebSocket() {

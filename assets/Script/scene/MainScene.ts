@@ -25,11 +25,11 @@ export class MainScene extends Component {
     start() {
         const mainResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.MainScene);
         if(!mainResourceConfig){
-            GameManager.showErrorLog("Failed to load main resource config");
+            GameManager.errorLog("Failed to load main resource config");
         }
         const backgroundFrame = ResourceManager.getSpriteFrame(mainResourceConfig.backgroundFrameArray[0]);
         if(!backgroundFrame){
-            GameManager.showErrorLog("Failed to load background frame");
+            GameManager.errorLog("Failed to load background frame");
         }
         this.background.spriteFrame = backgroundFrame;
 

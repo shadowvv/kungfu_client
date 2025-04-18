@@ -1,5 +1,6 @@
 import { _decorator, Component, Graphics, Vec2 } from 'cc';
 import { ViewConfig } from '../JsonObject/ViewConfig';
+import { GameManager } from '../main/GameManager';
 const { ccclass } = _decorator;
 
 /**
@@ -20,7 +21,7 @@ export class AttackRange extends Component {
     draw(outerRadius: number, innerRadius: number, startAngle: number, endAngle: number, offsetAngle: number, center?: Vec2): void {
         const graphics = this.getComponent(Graphics);
         if (!graphics) {
-            console.error("Graphics component not found!");
+            GameManager.errorLog("Graphics component not found!");
             return;
         }
 

@@ -7,7 +7,7 @@ import { ServerConfig } from '../JsonObject/ServerConfig';
 import { PlayerData } from '../main/PlayerData';
 import { PlayerShow } from '../PlayerShow';
 import { GlobalEventManager } from '../main/GlobalEventManager';
-import { CancelMatchReqMessage, CancelMatchRespMessage, LoadBattleReadyReqMessage, MatchResultBroadMessage, MessageType, RoleMessage } from '../main/Message';
+import { CancelMatchReqMessage, CancelMatchRespMessage, LoadBattleReadyReqMessage, MessageType } from '../main/Message';
 import { GameConfig } from '../JsonObject/GameConfig';
 import { ViewConfig } from '../JsonObject/ViewConfig';
 import { WeaponConfig } from '../JsonObject/WeaponConfig';
@@ -40,7 +40,6 @@ export class LoadingScene extends Component implements IResourceProgressUI {
     @property(Button)
     private cancelMatchBtn:Button = null;
 
-    
     private isMatch:boolean = false; // 是否匹配
     //*************************************匹配相关的组件
 
@@ -67,25 +66,29 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         ResourceManager.setProgressUI(this);
         // 加载资源配置文件
         if(!ResourceConfig.getInstance().isLoaded()){
+            GameManager.infoLog("ResourceConfig is not loaded, loading now...");
             await ResourceManager.loadJson("config/resourceConfig");
             const resourceConfig = ResourceManager.getJson("config/resourceConfig");
             if(!resourceConfig){
-                GameManager.showErrorLog("Failed to load resource config");
+                GameManager.errorLog("Failed to load resource config");
             }
             ResourceConfig.getInstance().loadConfig(resourceConfig);
         }
         const loadingResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.LoadingScene);
         if(!loadingResourceConfig){
-            GameManager.showErrorLog("Failed to load loading resource config");
+            GameManager.errorLog("Failed to load loading resource config");
         }
+
         // 加载背景图片
         const randomIndex = Math.floor(Math.random() * loadingResourceConfig.backgroundFrameArray.length);
         let background = ResourceManager.getSpriteFrame(loadingResourceConfig.backgroundFrameArray[randomIndex]);
         if(!background){
+            GameManager.infoLog("Background not found, loading now...");
             await ResourceManager.load(loadingResourceConfig.backgroundFrameArray[randomIndex],SpriteFrame);
             background = ResourceManager.getSpriteFrame(loadingResourceConfig.backgroundFrameArray[randomIndex]);
         }
         this.background.spriteFrame = background;
+
         // 加载全局资源
         if(LoadingScene.firstLoading){
             await this.loadGlobalResource();
@@ -94,6 +97,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
         await this.loadResource(ResourceTarget.LoadingScene);
         // 加载目标场景资源
         await this.loadResource(this.nextScene.toString() as ResourceTarget);
+
         // 是匹配，则显示玩家信息
         if(this.isMatch){
             await this.showSelfInfo();
@@ -112,37 +116,40 @@ export class LoadingScene extends Component implements IResourceProgressUI {
      * @returns 
      */
     private async loadGlobalResource() {
+        GameManager.infoLog("Loading global resources...");
         //加载全局资源
         await this.loadResource(ResourceTarget.Global);
 
+        GameManager.infoLog("initial Config files...");
         const gameConfig:JsonAsset = ResourceManager.getJson(GameConfig.CONFIG_FILE);
         if(!gameConfig){
-            GameManager.showErrorLog("Failed to load game config");
+            GameManager.errorLog("Failed to load game config");
         }
         GameConfig.getInstance().loadConfig(gameConfig);
 
         const serverConfig:JsonAsset = ResourceManager.getJson(ServerConfig.CONFIG_FILE);
         if(!serverConfig){
-            GameManager.showErrorLog("Failed to load server config");
+            GameManager.errorLog("Failed to load server config");
         }
         ServerConfig.getInstance().loadConfig(serverConfig);
 
         const viewConfig:JsonAsset = ResourceManager.getJson(ViewConfig.CONFIG_FILE);
         if(!viewConfig){
-            GameManager.showErrorLog("Failed to load view config");
+            GameManager.errorLog("Failed to load view config");
         }
         ViewConfig.getInstance().loadConfig(viewConfig);
 
         const weaponConfig:JsonAsset = ResourceManager.getJson(WeaponConfig.CONFIG_FILE);
         if(!weaponConfig){
-            GameManager.showErrorLog("Failed to load weapon config");
+            GameManager.errorLog("Failed to load weapon config");
         }
         WeaponConfig.getInstance().loadConfig(weaponConfig);
 
         // 加载BGM
+        GameManager.infoLog("initial BGM...");
         const globalResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.Global);
         if(!globalResourceConfig){
-            GameManager.showErrorLog("Failed to load global config");
+            GameManager.errorLog("Failed to load global config");
         }
         if(!GameManager.isPlayingBgm()){
             ResourceManager.loadMultiple(globalResourceConfig.audioArray,AudioClip).then((audioClips) => {
@@ -161,9 +168,10 @@ export class LoadingScene extends Component implements IResourceProgressUI {
      * @param targetResource 加载目标资源
      */
     private async loadResource(targetResource: ResourceTarget){
+        GameManager.infoLog(`Loading resources for ${targetResource}...`);
         const resourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(targetResource);
         if(!resourceConfig){
-            GameManager.showErrorLog("Failed to load resource config");
+            GameManager.errorLog("Failed to load resource config");
         }   
 
         this.totalResources = resourceConfig.audioArray.length;
@@ -182,6 +190,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
      * @description 显示玩家信息
      */
     async showSelfInfo() {
+        GameManager.infoLog("Showing self info...");
         this.selfShow.node.active = true;
 
         const playerData:PlayerData = GameManager.getPlayerData();
@@ -195,6 +204,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
      * @param opponentData 对手数据
      */
     async showOpponentInfo(opponentData: PlayerData) {
+        GameManager.infoLog("Showing opponent info...");
         this.opponentShow.node.active = true;
 
         this.opponentShow.showPlayerInfo(opponentData);
@@ -209,6 +219,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
      * @param customEventData 
      */
     cancelMatch(event: Event, customEventData: string) {
+        GameManager.infoLog("Cancel match button clicked...");
         const messaeg:CancelMatchReqMessage = new CancelMatchReqMessage();
         GameManager.sendMessage(messaeg);
     }
@@ -218,6 +229,7 @@ export class LoadingScene extends Component implements IResourceProgressUI {
      * @param message 取消匹配响应消息
      */
     onCancelMatch(message:CancelMatchRespMessage) {
+        GameManager.infoLog("Received cancel match response...");
         if(director["sceneParams"]){
             const sourceScene = director["sourceScene"];
             director.loadScene(sourceScene);
@@ -230,10 +242,10 @@ export class LoadingScene extends Component implements IResourceProgressUI {
      * @description 进入下一个场景
      */
     enterNextScene() {
+        GameManager.infoLog(`Entering next scene: ${this.nextScene}...`);
         GameManager.beforeEnterScene();
         director.loadScene(this.nextScene); 
     }
-
 
     updateProgress(): void {
         this.loadedResources++;

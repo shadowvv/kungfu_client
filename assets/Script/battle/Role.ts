@@ -1,4 +1,4 @@
-import { _decorator, Component, instantiate, Node, Prefab, __private, Vec2, Label, Vec3 } from 'cc';
+import { _decorator, Component, __private, Vec2, Label, Vec3 } from 'cc';
 import { MoveCircle } from './MoveCircle';
 import { AttackRange } from './AttackRange';
 import { Body } from './Body';

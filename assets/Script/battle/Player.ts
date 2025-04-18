@@ -13,14 +13,12 @@ export class Player extends Component {
 
     @property(Prefab)
     private role: Prefab = null; // 角色预制体
-    private camera: Camera = null; // 相机
     private roleScript: Role = null; // 角色脚本
 
     private active: boolean = true; // 是否激活
     private center: Vec2 = new Vec2(0, 0);//世界坐标
     private moveCenter: Vec2 = new Vec2(0, 0);//移动世界坐标
     private currentAngle: number = 0; // 最后角度
-    private actionType: ActionType; // 动作类型
 
     /**
      * @description 创建角色
@@ -31,8 +29,6 @@ export class Player extends Component {
      * @param netController 网络控制器
      */
     init(userName: string, roleId: number, weaponType: WeaponEnum,positionX: number,positionY: number,faceAngle: number,hp: number): void {
-        this.actionType = ActionType.MOVE;
-
         if (this.role) {
             const roleNode = instantiate(this.role);
             this.node.addChild(roleNode);
@@ -46,10 +42,10 @@ export class Player extends Component {
                 this.center.set(initialPos.x, initialPos.y);
                 this.moveCenter.set(initialPos.x, initialPos.y);
             } else {
-                console.error("Role component not found!");
+                GameManager.errorLog("Role component not found!");
             }
         } else {
-            console.error("Role prefab is not assigned!");
+            GameManager.errorLog("Role prefab is not assigned!");
         }
     }
 
@@ -68,7 +64,7 @@ export class Player extends Component {
 
             this.roleScript.action(x, y, faceAngle,hp);
         } else {
-            console.error("Role script is not initialized!");
+            GameManager.errorLog("Role script is not initialized!");
         }
     }
 
@@ -77,22 +73,18 @@ export class Player extends Component {
      */
     waitCommand() {
         this.active = true;
-        this.actionType = ActionType.MOVE;
     }
 
     /**
      * @description 等待操作
      */
     waitAction() {
-        this.actionType = ActionType.MOVE;
-
         this.roleScript.updateBody(this.center);
         this.roleScript.updateAttack(this.center);
         this.roleScript.rotateAttack(this.currentAngle);
     }
 
     onLoad(): void {
-        this.camera = this.node.scene.getComponentInChildren(Camera);
         input.on(Input.EventType.MOUSE_DOWN, this.onMouseDown, this);
         input.on(Input.EventType.MOUSE_MOVE, this.onMouseMove, this);
     }
@@ -143,13 +135,13 @@ export class Player extends Component {
             return;
         }
 
-        const mousePos = new Vec2(event.getLocationX(), event.getLocationY());
-        const screenPos = new Vec3(mousePos.x, mousePos.y, 0);
+        // const mousePos = new Vec2(event.getLocationX(), event.getLocationY());
+        // const screenPos = new Vec3(mousePos.x, mousePos.y, 0);
 
-        const dir = mousePos.subtract(this.center);
-        let angle = Math.atan2(dir.y, dir.x) * (180 / Math.PI);
-        this.currentAngle = (angle + 360) % 360;
-        this.roleScript.rotateAttack(this.currentAngle);
+        // const dir = mousePos.subtract(this.center);
+        // let angle = Math.atan2(dir.y, dir.x) * (180 / Math.PI);
+        // this.currentAngle = (angle + 360) % 360;
+        // this.roleScript.rotateAttack(this.currentAngle);
 
         // if (this.actionType == ActionType.ATTACK) {
         //     const dir = mousePos.subtract(this.center);

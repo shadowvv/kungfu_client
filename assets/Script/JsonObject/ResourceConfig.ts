@@ -1,4 +1,5 @@
 import { _decorator, JsonAsset } from 'cc';
+import { GameManager } from '../main/GameManager';
 const { ccclass } = _decorator;
 
 /**
@@ -29,7 +30,7 @@ export class ResourceConfig {
         const json = jsonAsset.json;
 
         if (!Array.isArray(json)) {
-            console.error("loadConfig 失败,json 不是数组", json);
+            GameManager.errorLog("ResourceCOnfig loadConfig 失败,json 不是数组"+json);
             return;
         }
 
@@ -37,7 +38,7 @@ export class ResourceConfig {
             const data = json[i];
 
             if (!data.name) {
-                console.warn(`资源缺少 name,跳过`, data);
+                GameManager.infoLog(`资源缺少 name,跳过`+data);
                 continue;
             }
 

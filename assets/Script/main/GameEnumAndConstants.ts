@@ -35,33 +35,33 @@ export enum ResourceTarget {
  * 角色动作类型
  */
 export enum ActionType {
-    ATTACK,
-    ASSISTANCE,
-    SPECIAL_ATTACK,
+    ATTACK = 0,
+    ASSISTANCE = 1,
+    SPECIAL_ATTACK = 2,
 
-    HELLO,
-    REGRET,
-    STAND,
-    VICTORY,
+    HELLO = 3,
+    REGRET = 4,
+    STAND = 5,
+    VICTORY = 6,
     
-    BEHIT,
-    BLOCK,
-    DEAD,
-    MOVE,
+    BEHIT = 7,
+    BLOCK = 8,
+    DEAD = 9,
+    MOVE = 10,
 }
 
 /**
  * 角色动作方向
  */
 export enum ActionDirection {
-    RIGHT,
-    RIGHT_DOWN,
-    DOWN,
-    LEFT_DOWN,
-    LEFT,
-    LEFT_UP,
-    UP,
-    RIGHT_UP,
+    RIGHT = 0,
+    RIGHT_DOWN = 1,
+    DOWN = 2,
+    LEFT_DOWN = 3,
+    LEFT = 4,
+    LEFT_UP = 5,
+    UP = 6,
+    RIGHT_UP = 7,
 }
 
 /**

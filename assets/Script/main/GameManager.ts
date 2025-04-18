@@ -65,7 +65,7 @@ export class GameManager extends Component {
             if (loadingScene) {
                 loadingScene.enterNextScene();
             } else {
-                GameManager.showErrorLog("LoadingScene not found in the scene");
+                GameManager.errorLog("LoadingScene not found in the scene");
             }
         }
     }
@@ -88,7 +88,7 @@ export class GameManager extends Component {
             if (loadingScene) {
                 await loadingScene.showOpponentInfo(this.opponentData);
             } else {
-                GameManager.showErrorLog("LoadingScene not found in the scene");
+                GameManager.errorLog("LoadingScene not found in the scene");
             }
         }
     }
@@ -174,12 +174,16 @@ export class GameManager extends Component {
      * @description 显示错误日志
      * @param log 日志
      */
-    static showErrorLog(log: string) {
+    static errorLog(log: string) {
         if (Debug.isDebug) {
             MarqueeManager.addMessage(log);
         }else{  
             console.error(log);
         }
+    }
+
+    static infoLog(log: string) {
+        console.log(log);
     }
 
     /**

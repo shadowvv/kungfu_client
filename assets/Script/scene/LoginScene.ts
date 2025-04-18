@@ -24,12 +24,12 @@ export class LoginScene extends Component {
     onLoad(): void {
         const loginResourceConfig:resourceData = ResourceConfig.getInstance().getResourceConfig(ResourceTarget.LoginScene);
         if(!loginResourceConfig){
-            GameManager.showErrorLog("Failed to load login resource config");
+            GameManager.errorLog("Failed to load login resource config");
         }
 
         const backgroundFrame = ResourceManager.getSpriteFrame(loginResourceConfig.backgroundFrameArray[0]);
         if(!backgroundFrame){
-            GameManager.showErrorLog("Failed to load background frame: "+loginResourceConfig.backgroundFrameArray[0]);
+            GameManager.errorLog("Failed to load background frame: "+loginResourceConfig.backgroundFrameArray[0]);
         }
         this.background.spriteFrame = backgroundFrame;
 
@@ -45,11 +45,11 @@ export class LoginScene extends Component {
      */
     register(event: Event, customEventData: string): void {
         if (this.userNameInputText.string === "") {
-            GameManager.showErrorLog("用户名不能为空！");
+            GameManager.errorLog("用户名不能为空！");
             return;
         }
         if (this.passwordInputText.string === "") {
-            GameManager.showErrorLog("密码不能为空！");
+            GameManager.errorLog("密码不能为空！");
             return;
         }
         const registerReq = new RegisterReqMessage();
@@ -71,11 +71,11 @@ export class LoginScene extends Component {
      */
     login(event: Event, customEventData: string): void {
         if (this.userNameInputText.string === "") {
-            GameManager.showErrorLog("用户名不能为空！");
+            GameManager.errorLog("用户名不能为空！");
             return;
         }
         if (this.passwordInputText.string === "") {
-            GameManager.showErrorLog("密码不能为空！");
+            GameManager.errorLog("密码不能为空！");
             return;
         }
 

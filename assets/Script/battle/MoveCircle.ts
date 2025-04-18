@@ -1,5 +1,6 @@
 import { _decorator, Component, Graphics, Vec2, View, view } from 'cc';
 import { ViewConfig } from '../JsonObject/ViewConfig';
+import { GameManager } from '../main/GameManager';
 const { ccclass, property } = _decorator;
 
 /**
@@ -16,7 +17,7 @@ export class MoveCircle extends Component {
     draw(moveRange: number): void {
         const g = this.getComponent(Graphics);
         if (!g) {
-            console.error("Graphics component not found!");
+            GameManager.errorLog("Graphics component not found!");
             return;
         }
 

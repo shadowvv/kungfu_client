@@ -1,4 +1,5 @@
 import { _decorator, resources, JsonAsset } from 'cc';
+import { GameManager } from '../main/GameManager';
 const { ccclass } = _decorator;
 
 /**
@@ -29,7 +30,7 @@ export class ServerConfig {
         const json = jsonAsset.json;
 
         if (!Array.isArray(json)) {
-            console.error("loadConfig 失败,json 不是数组", json);
+            GameManager.errorLog("ServerConfig loadConfig 失败,json 不是数组"+json);
             return;
         }
 

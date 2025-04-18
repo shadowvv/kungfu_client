@@ -60,7 +60,7 @@ export class BattleScene extends Component {
                 if (this.targetScript) {
                     this.targetScript.init(roleData.roleId, roleData.userName, roleData.weaponType,roleData.getPositionX(), roleData.getPositionY(), roleData.getFaceAngle(),roleData.getHp());
                 } else {
-                    console.error("Target Player component not found!");
+                    GameManager.errorLog("Target Player component not found!");
                 }
             }
         }
@@ -79,7 +79,7 @@ export class BattleScene extends Component {
             if (this.selfScript) {
                 this.selfScript.init(roleData.userName, roleData.roleId, roleData.weaponType, roleData.getPositionX(), roleData.getPositionY(), roleData.getFaceAngle(),roleData.getHp());
             } else {
-                console.error("Self Player component not found!");
+                GameManager.errorLog("Self Player component not found!");
             }
         }
     }
@@ -184,7 +184,7 @@ export class BattleScene extends Component {
      * @param operationRespMessage 操作响应消息对象
      */
     onOperationResp(operationRespMessage: OperationRespMessage): void {
-        console.log("Operation response received.");  // 记录操作响应
+        GameManager.infoLog("Operation response received.");  // 记录操作响应
         // TODO: 实现操作响应的逻辑，例如更新角色位置或操作结果
     }
 
@@ -193,7 +193,7 @@ export class BattleScene extends Component {
      * @param battleResultBroadMessage 战斗结果广播消息对象
      */
     onBattleResultBroad(battleResultBroadMessage: BattleResultBroadMessage): void {
-        console.log("Battle result received:", battleResultBroadMessage);  // 记录战斗结果
+        GameManager.infoLog("Battle result received:"+ battleResultBroadMessage);  // 记录战斗结果
         // 通知游戏管理器处理战斗结果，传递参与战斗的角色信息
         this.onBattleOperation(battleResultBroadMessage.roles);
         // TODO: 处理战斗结果，例如更新 UI 或显示战斗胜负
