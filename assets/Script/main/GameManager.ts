@@ -125,9 +125,9 @@ export class GameManager extends Component {
      * @param audioClip 播放音频
      */
     static playBgm(audioClip: AudioClip) {
-        this.instance.audioSource.clip = audioClip;
-        this.instance.audioSource.loop = true;
-        this.instance.audioSource.play();
+        // this.instance.audioSource.clip = audioClip;
+        // this.instance.audioSource.loop = true;
+        // this.instance.audioSource.play();
     }
 
     /**

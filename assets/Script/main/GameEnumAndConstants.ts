@@ -71,23 +71,45 @@ export enum BattleState {
     /**
      * 准备
      */
-    PREPARE,
+    PREPARE = 1,
     /**
      * 等待指令
      */
-    WAIT_COMMAND,
+    WAIT_COMMAND = 2,
     /**
      * 行动
      */
-    ACTION,
+    ACTION = 3,
     /**
      * 等待行动结束
      */
-    WAIT_ACTION,
+    WAIT_ACTION = 4,
     /**
      * 结束
      */
-    END,
+    END = 5,
+}
+
+/**
+ * 玩家操作类型
+ */
+export enum PlayerOperation {
+    /**
+     * 站位
+     */
+    STAND = 0,
+    /**
+     * 移动
+     */
+    MOVE = 1,
+    /**
+     * 攻击
+     */
+    ATTACK = 2,
+    /**
+     * 执行动作
+     */
+    ACTION = 3,
 }
 
 /**

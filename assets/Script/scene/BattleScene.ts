@@ -15,7 +15,7 @@ export class BattleScene extends Component {
     private lastTick: number = 0;
     private countDownTick: number = 0;
 
-    private gameState: BattleState = BattleState.PREPARE;// 战斗相关
+    private battleState: BattleState = BattleState.PREPARE;// 战斗相关
 
     @property(RichText)
     private titleText: RichText = null; // UI 标题文本
@@ -87,8 +87,8 @@ export class BattleScene extends Component {
     /**
      * @description 战斗开始
      */
-    battleStart(): void {
-        this.gameState = BattleState.WAIT_COMMAND;
+    private battleStart(): void {
+        this.battleState = BattleState.PREPARE;
         this.countDownTick = getWaitCommandTick();
 
         this.tick = performance.now();
@@ -114,8 +114,10 @@ export class BattleScene extends Component {
      * @param battleState 战斗状态
      */
     onBattleStateChange(battleState: BattleStateBroadMessage): void {
-        this.gameState = battleState.battleState;
-        switch (this.gameState) {
+        this.battleState = battleState.battleState;
+        switch (this.battleState) {
+            case BattleState.PREPARE:
+                this.countDownTick = 5;
             case BattleState.WAIT_COMMAND:
                 this.countDownTick = getWaitCommandTick();
                 this.selfScript.waitCommand();
@@ -164,7 +166,10 @@ export class BattleScene extends Component {
      * @description 更新 UI 标题
      */
     private updateUI(): void {
-        switch (this.gameState) {
+        switch (this.battleState) {
+            case BattleState.PREPARE:
+                this.titleText.string = `等待${GameManager.getPlayerData().getPlayerName()}准备：${this.countDownTick} 秒`;
+                break;
             case BattleState.WAIT_COMMAND:
                 this.titleText.string = `等待${GameManager.getPlayerData().getPlayerName()}指令：${this.countDownTick} 秒`;
                 break;

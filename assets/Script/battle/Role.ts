@@ -1,8 +1,8 @@
-import { _decorator, Component, __private, Vec2, Label, Vec3 } from 'cc';
+import { _decorator, Component, __private, Vec2, Label, Vec3, Tween, tween } from 'cc';
 import { MoveCircle } from './MoveCircle';
 import { AttackRange } from './AttackRange';
 import { Body } from './Body';
-import { getBaseNumber, WeaponEnum } from '../main/GameEnumAndConstants';
+import { ActionType, getBaseNumber, WeaponEnum } from '../main/GameEnumAndConstants';
 import { WeaponConfig } from '../JsonObject/WeaponConfig';
 const { ccclass, property } = _decorator;
 
@@ -61,9 +61,10 @@ export class Role extends Component {
      */
     private draw(): void {
         this.title.string = this.username + ": weaponType:" + WeaponEnum[this.weaponType] + " HP:" + this.hp;
-        this.title.node.setPosition(-getBaseNumber(), this.radius + getBaseNumber(), 0);
+        // this.title.node.setPosition(-getBaseNumber(), this.radius + getBaseNumber(), 0);
+
         this.moveCircle.draw(this.radius);
-        this.body.initBody(this.weaponType); 
+        this.body.initBody(this.weaponType,this.faceAngle); 
         const attackRangeParam = WeaponConfig.getInstance().getWeaponById(this.weaponType);
         this.attackRange.draw(attackRangeParam.innerRadius * getBaseNumber(), attackRangeParam.outerRadius * getBaseNumber(), attackRangeParam.startAngle, attackRangeParam.endAngle, this.faceAngle);  // 设置半径和颜色
     }
@@ -112,9 +113,23 @@ export class Role extends Component {
         const center = new Vec2(x, y);
         this.rotateAttack(faceAngle);
 
-        this.node.worldPosition = new Vec3(x, y, 0);
+        // this.node.worldPosition = ;
         this.faceAngle = faceAngle;
         this.hp = hp;
+
+        this.title.string = this.username + ": weaponType:" + WeaponEnum[this.weaponType] + " HP:" + this.hp;
+        this.body.moveTo(x,y);
+        
+        // 使用 Tween 实现平滑移动
+        Tween.stopAllByTarget(this.node); // 停止所有针对该节点的Tween动画
+        tween(this.node)
+            .to(1, { worldPosition: new Vec3(x, y, 0) }) // 在1秒内移动到目标位置
+            .call(() => {
+                // 移动结束后播放攻击动画
+                this.body.attack(faceAngle);
+            })
+            .start();
+        // this.body.idle(faceAngle);
     }
 
     /**
